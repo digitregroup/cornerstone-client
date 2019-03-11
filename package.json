@@ -1,0 +1,20 @@
+{
+  "name": "@digitregroup/cornerstone-client",
+  "version": "0.0.1",
+  "dependencies": {},
+  "description": "Client for Cornerstone api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digitregroup/cornerstone-client.git"
+  },
+  "author": "Dominique",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/digitregroup/cornerstone-client/issues"
+  },
+  "homepage": "https://github.com/digitregroup/cornerstone-client#readme"
+}
