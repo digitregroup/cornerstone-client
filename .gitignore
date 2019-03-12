@@ -1,2 +1,6 @@
 
 \.idea/
+
+node_modules/
+
+test/tests\.test\.js
