@@ -1,15 +1,16 @@
 const crypto = require('crypto');
 const axios  = require('axios');
+const fs     = require('fs');
 const config = require('../../config/common')();
 
 class Auth {
 
   constructor({apiId, apiSecret, username, alias, corpname}) {
-    this.apiId             = apiId;
-    this.apiSecret         = apiSecret;
-    this.username          = username;
-    this.alias             = alias;
-    this.corpname          = corpname;
+    this.apiId     = apiId;
+    this.apiSecret = apiSecret;
+    this.username  = username;
+    this.alias     = alias;
+    this.corpname  = corpname;
   }
 
   /**
@@ -25,6 +26,7 @@ class Auth {
     const stringToSign = httpMethod + '\n' + apiKeyCsod + '\n' + dateCsod + '\n' + httpUrl;
     const secretKey    = new Buffer(this.apiSecret, 'base64');
     const hmac         = crypto.createHmac('sha512', secretKey);
+    console.log('[getSignature] - signature: ', JSON.stringify(stringToSign));
 
     return hmac.update(stringToSign).digest('base64');
   }
@@ -35,6 +37,7 @@ class Auth {
     const stringToSign    = method + '\n' + dateCsod + '\n' + sessionTokenKey + '\n' + httpUrl;
     const secretKey       = new Buffer(sessionSecret, 'base64');
     const hmac            = crypto.createHmac('sha512', secretKey);
+    console.log('[getSignatureSession] - signature: ', JSON.stringify(stringToSign));
 
     return hmac.update(stringToSign).digest('base64');
   }
@@ -78,6 +81,15 @@ class Auth {
    * @returns {Promise<{alias: *, expiresOn: *, secret: *, status: number | string, token: *}>}
    */
   async setSession() {
+    const sessionFile = await JSON.parse(this.readSession());
+    if(sessionFile) {
+      const dateNow     = new Date();
+      const dateSession = new Date(sessionFile.expiresOn);
+
+      if (dateNow < dateSession) {
+        return sessionFile;
+      }
+    }
 
     const dateTime = this.getDatetimeUTC();
     const httpUrl  = config.CORNERSTONE_PATH_SESSION;
@@ -106,15 +118,25 @@ class Auth {
       const response = await connection.post(path);
 
       if (response.data.status !== 201) {
-        console.log('Error authentification')
+        console.log('[setSession] - Error authentification')
       } else {
-        return {
+        console.log('[setSession] - status: ', response.data.status);
+        const session = {
           status:    response.data.status,
           token:     response.data.data[0].Token,
           secret:    response.data.data[0].Secret,
           alias:     response.data.data[0].Alias,
           expiresOn: response.data.data[0].ExpiresOn
         };
+        await fs.writeFile('tmp/session.json', JSON.stringify(session), 'utf8', (e) => {
+          if (e) {
+            console.log('[setSession] - Error save session file', e);
+          } else {
+            console.log('[setSession] - Session saved in tmp file');
+          }
+        });
+
+        return session;
       }
     } catch (e) {
       console.log(e);
@@ -138,6 +160,18 @@ class Auth {
    */
   getBaseUrl({corpname}) {
     return config.CORNERSTONE_BASE_URL.replace('{corpname}', corpname);
+  }
+
+  readSession() {
+    let file;
+    if (fs.existsSync(config.TMP_PATH + 'session.json')) {
+      file = fs.readFileSync(config.TMP_PATH + 'session.json', 'utf8');
+      console.log('[readSession] - session tmp file: ', file);
+
+      return file;
+    }
+    file && console.log('3', file);
+    return null;
   }
 
 

@@ -3,8 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "axios": "^0.18.0",
-    "atob": "latest",
-    "btoa": "latest"
+    "console-stamp": "^0.2.7"
   },
   "description": "Client for Cornerstone api",
   "main": "src/index.js",

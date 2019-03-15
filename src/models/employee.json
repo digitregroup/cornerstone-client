@@ -1,0 +1,53 @@
+{
+  "id": null,
+  "userId": null,
+  "userName": null,
+  "guid": null,
+  "firstName": null,
+  "lastName": null,
+  "middleName": null,
+  "prefix": null,
+  "suffix": null,
+  "primaryEmail": null,
+  "personalEmail": null,
+  "homePhone": null,
+  "mobilePhone": null,
+  "workPhone": null,
+  "fax": null,
+  "address": {
+    "country": null,
+    "line1": null,
+    "line2": null,
+    "city": null,
+    "state": null,
+    "zipCode": null
+  },
+  "workerStatus": {
+    "lastHireDate": null,
+    "originalHireDate": null,
+    "active": null,
+    "absent": null
+  },
+  "settings": {
+    "displayLanguage": null,
+    "timeZone": null,
+    "trainingApprovals": null
+  },
+  "manager": null,
+  "approver": null,
+  "relations": null,
+  "ous": [
+    {
+      "id": null,
+      "ouId": null,
+      "name": null,
+      "type": null
+    }
+  ],
+  "selfRegistrationGroup": null,
+  "customOus": null,
+  "employeeMetaData": {
+    "createdDate": null,
+    "modifiedDate": null
+  }
+}
