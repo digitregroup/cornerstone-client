@@ -54,7 +54,7 @@ class Auth {
 
     return await axios.create({
       baseUrl: baseUrl,
-      timeout: 5000,
+      timeout: 50000,
       headers: {
         'x-csod-api-key':   apiKey,
         'x-csod-date':      dateUTC,
@@ -67,7 +67,7 @@ class Auth {
 
     return await axios.create({
       baseUrl: baseUrl,
-      timeout: 5000,
+      timeout: 50000,
       headers: {
         'x-csod-date':          dateUTC,
         'x-csod-session-token': token,
@@ -82,7 +82,7 @@ class Auth {
    */
   async setSession() {
     const sessionFile = await JSON.parse(this.readSession());
-    if(sessionFile) {
+    if (sessionFile) {
       const dateNow     = new Date();
       const dateSession = new Date(sessionFile.expiresOn);
 
@@ -118,7 +118,7 @@ class Auth {
       const response = await connection.post(path);
 
       if (response.data.status !== 201) {
-        console.log('[setSession] - Error authentification')
+        console.log('[setSession] - Error authentification', response.data)
       } else {
         console.log('[setSession] - status: ', response.data.status);
         const session = {

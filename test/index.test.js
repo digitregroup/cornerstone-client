@@ -39,6 +39,9 @@ describe('Test signatures', () => {
   });
 });
 
+//*****************************************/
+// Test Session
+//*****************************************/
 describe('Test session', () => {
   it('[getSession] - It should be true', async () => {
     const session = await auth.setSession();
@@ -47,32 +50,78 @@ describe('Test session', () => {
   });
 });
 
-describe('Test reporting api', () => {
-  it('[getUserReportingByEmail] - It should be true', async () => {
-    const user = await cornerstone.getUserReportingByEmail({email: 'dominique.lopez@digitregroup.com'});
+//*****************************************/
+// REPORTING User
+//*****************************************/
+describe('Test Reporting user', () => {
+  it('[getReportingUserByEmail] - It should be true', async () => {
+    const user = await cornerstone.getReportingUserByEmail({email: 'dominique.lopez@digitregroup.com'});
 
     return expect(user.user_id).to.be.eql(2164);
   });
 
-  it('[getUserByUserReportingIdCornerstone] - It should be true', async () => {
-    const user = await cornerstone.getUserReportingByUserIdCornerstone({user_id: 2164});
+  it('[getReportingByUserId] - It should be true', async () => {
+    const user = await cornerstone.getReportingByUserId({user_id: 2164});
+    console.log(user);
+    return expect(user.user_id).to.be.eql(2164);
+  });
 
+  it('[getReportingByUserRef] - It should be true', async () => {
+    const user = await cornerstone.getReportingByUserRef({user_ref: 'CAPI11686'});
+    console.log(user);
     return expect(user.user_id).to.be.eql(2164);
   });
 });
 
-describe('Test rest employees', () => {
+//*****************************************/
+// REPORTING Keycode
+//*****************************************/
+describe('Test Reporting key_code', () => {
+  it('[getReportingKeycodeByUserId] - It should be true', async () => {
+    const keycode = await cornerstone.getReportingKeycodeByUserId({user_id: 44});
+    //console.log(keycode);
+    return expect(keycode.tu_code_id).to.be.eql(1);
+  });
+
+  it('[getReportingKeycodeByUserRef] - It should be true', async () => {
+    const keycode = await cornerstone.getReportingKeycodeByUserRef({user_ref: 'CAPI11686'});
+    console.log(keycode);
+
+    return expect(keycode.tu_code_id).to.be.eql(1);
+  });
+});
+
+//*****************************************/
+// REST Employee
+//*****************************************/
+describe('Test REST employees', () => {
   it('[getEmployeeByuserId] - It should be true', async () => {
-    const user = await cornerstone.getEmployeeByUserId({user_id: 'dladmin'});
+    const user = await cornerstone.getEmployeeByUserId({user_id: 'CAPI11686'});
     console.log(user);
     return expect(user.userId).to.be.eql('dladmin');
   });
 
   it('[updateEmployee] - It should be true', async () => {
     employee.personalEmail = 'greef@gmail.com';
-    const user = await cornerstone.updateEmployeeByUserId({id: 43, data: {"personalEmail": "greef@free.fr"}});
-
+    const user = await cornerstone.updateEmployeeByUserId({id: 2164, data: {"userId": "CAPI11686"}});
+    console.log(user);
     return expect(user.status).to.be.eql('Success');
   });
 });
 
+//*****************************************/
+// REST Keycode
+//*****************************************/
+describe('Test REST keycode', () => {
+  it('[updateEmployee] - It should be true', async () => {
+    const user = await cornerstone.postKeycodeUserId({
+      amount: 50,
+      keyCode: 'CAPI11686',
+      userId: 'CAPI11686',
+      expirationDate: '2019-03-31',
+      assignmentTitle: 'Test Dominique'
+    });
+    console.log(user);
+    return expect(user.status).to.be.eql('Success');
+  });
+});

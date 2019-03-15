@@ -1,53 +1,59 @@
 {
-  "id": null,
-  "userId": null,
-  "userName": null,
-  "guid": null,
-  "firstName": null,
-  "lastName": null,
+  "id": 2164,
+  "userId": "CAPI_11686",
+  "userName": "CAPI_11686",
+  "guid": "fa23b14d-0962-43aa-bc8e-d114e3db826a",
+  "firstName": "Dominique",
+  "lastName": "LOPEZ",
   "middleName": null,
   "prefix": null,
   "suffix": null,
-  "primaryEmail": null,
+  "primaryEmail": "dominique.lopez@digitregroup.com",
   "personalEmail": null,
   "homePhone": null,
   "mobilePhone": null,
-  "workPhone": null,
-  "fax": null,
+  "workPhone": "45645645",
+  "fax": "2222222222",
   "address": {
-    "country": null,
-    "line1": null,
-    "line2": null,
-    "city": null,
+    "country": "FRA",
+    "line1": "",
+    "line2": "",
+    "city": "",
     "state": null,
-    "zipCode": null
+    "zipCode": ""
   },
   "workerStatus": {
-    "lastHireDate": null,
+    "lastHireDate": "2018-04-27T00:00:00",
     "originalHireDate": null,
-    "active": null,
-    "absent": null
+    "active": true,
+    "absent": false
   },
   "settings": {
-    "displayLanguage": null,
-    "timeZone": null,
-    "trainingApprovals": null
+    "displayLanguage": "",
+    "timeZone": "",
+    "trainingApprovals": 1
   },
   "manager": null,
   "approver": null,
   "relations": null,
   "ous": [
     {
-      "id": null,
-      "ouId": null,
-      "name": null,
-      "type": null
+      "id": 110,
+      "ouId": "CAPI",
+      "name": "Capifrance",
+      "type": "Division"
+    },
+    {
+      "id": 104,
+      "ouId": "MNT_CAPI",
+      "name": "Montpellier",
+      "type": "Location"
     }
   ],
   "selfRegistrationGroup": null,
   "customOus": null,
   "employeeMetaData": {
-    "createdDate": null,
-    "modifiedDate": null
+    "createdDate": "2019-02-20T10:31:17.937",
+    "modifiedDate": "2019-03-15T15:31:17.523"
   }
 }
