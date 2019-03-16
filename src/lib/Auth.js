@@ -80,7 +80,7 @@ class Auth {
    * Get session from cornerstone
    * @returns {Promise<{alias: *, expiresOn: *, secret: *, status: number | string, token: *}>}
    */
-  async setSession() {
+  async setSession({dateUTC}) {
     const sessionFile = await JSON.parse(this.readSession());
     if (sessionFile) {
       const dateNow     = new Date();
@@ -91,14 +91,13 @@ class Auth {
       }
     }
 
-    const dateTime = this.getDatetimeUTC();
     const httpUrl  = config.CORNERSTONE_PATH_SESSION;
 
     const signature = this.getSignature({
       apiId:     this.apiId,
       apiSecret: this.apiSecret,
       httpUrl:   httpUrl,
-      dateUTC:   dateTime
+      dateUTC:   dateUTC
     });
 
     const baseUrl = this.getBaseUrl({corpname: this.corpname});
@@ -111,7 +110,7 @@ class Auth {
       const connection = await this.setConnection({
         baseUrl:   baseUrl,
         apiKey:    this.apiId,
-        dateUTC:   dateTime,
+        dateUTC:   dateUTC,
         signature: signature
       });
 
@@ -141,16 +140,6 @@ class Auth {
     } catch (e) {
       console.log(e);
     }
-  }
-
-  /**
-   * Get UTC datetime
-   * @returns {string} ex: '2019-03-11T17:05:00.969'
-   */
-  getDatetimeUTC() {
-    const dateTimeUTC = new Date().toISOString();
-
-    return dateTimeUTC.substring(0, dateTimeUTC.length - 1);
   }
 
   /**

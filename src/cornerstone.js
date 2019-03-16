@@ -5,13 +5,13 @@ const querystring = require('querystring');
 class Cornerstone {
 
   constructor({apiId, apiSecret, username, alias, corpname}) {
-    this.apiId             = apiId;
-    this.apiSecret         = apiSecret;
-    this.username          = username;
-    this.alias             = alias;
-    this.corpname          = corpname;
-    this.connectionSession = null;
-    this.auth              = null;
+    this.apiId     = apiId;
+    this.apiSecret = apiSecret;
+    this.username  = username;
+    this.alias     = alias;
+    this.corpname  = corpname;
+    this.dateTime  = this.getDatetimeUTC();
+    this.auth      = null;
   }
 
   getAuth() {
@@ -31,17 +31,8 @@ class Cornerstone {
   }
 
   async getConnectionSession({httpUrl, method}) {
-    if (this.connectionSession !== null) {
-      return this.connectionSession;
-    }
 
-    const session = await this.auth.setSession({
-      apiId:     this.apiId,
-      apiSecret: this.apiSecret,
-      username:  this.username,
-      alias:     this.alias,
-      corpname:  this.corpname
-    });
+    const session = await this.auth.setSession({dateUTC: this.dateTime});
 
     const baseUrl = this.auth.getBaseUrl({corpname: this.corpname});
     console.log('[setConnectionSession] - baseUrl: ', baseUrl);
@@ -52,13 +43,13 @@ class Cornerstone {
       sessionToken:  session.token,
       sessionSecret: session.secret,
       httpUrl:       httpUrl,
-      dateUTC:       this.auth.getDatetimeUTC()
+      dateUTC:       this.dateTime
     });
 
     console.log('[setConnectionSession] - signature: ', sessionSignature);
     return await this.auth.setConnectionSession({
       baseUrl:   baseUrl,
-      dateUTC:   this.auth.getDatetimeUTC(),
+      dateUTC:   this.dateTime,
       token:     session.token,
       signature: sessionSignature
     });
@@ -122,14 +113,14 @@ class Cornerstone {
   }
 
 
-  async getEmployeeByUserId({user_id}) {
+  async getEmployeeByUserId({userId}) {
     this.getAuth();
-    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEE + 'userid-' + user_id;
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEE + 'userid-' + userId;
 
     console.log('[getEmployeeByUserId] - path: ', path);
 
     const connectionSession = await this.getConnectionSession({
-      httpUrl: config.CORNERSTONE_SERVICE_EMPLOYEE + 'userid-' + user_id,
+      httpUrl: config.CORNERSTONE_SERVICE_EMPLOYEE + 'userid-' + userId,
       method:  'GET'
     });
 
@@ -237,7 +228,15 @@ class Cornerstone {
     return null;
   }
 
+  /**
+   * Get UTC datetime
+   * @returns {string} ex: '2019-03-11T17:05:00.969'
+   */
+  getDatetimeUTC() {
+    const dateTimeUTC = new Date().toISOString();
 
+    return dateTimeUTC.substring(0, dateTimeUTC.length - 1);
+  }
 }
 
 module.exports = Cornerstone;
