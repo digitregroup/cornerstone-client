@@ -14,7 +14,7 @@ class Cornerstone {
     this.auth      = null;
   }
 
-  getAuth() {
+  setAuth() {
     if (this.auth !== null) {
       return this.auth;
     }
@@ -56,7 +56,7 @@ class Cornerstone {
   }
 
   async getReporting({request, url}) {
-    this.getAuth();
+    this.setAuth();
     const path = this.auth.getBaseUrl({corpname: this.corpname}) + url + request;
     console.log('[getReporting] - path: ', path);
     const connectionSession = await this.getConnectionSession({
@@ -112,9 +112,8 @@ class Cornerstone {
     return await this.getReporting({request: request, url: url});
   }
 
-
   async getEmployeeByUserId({userId}) {
-    this.getAuth();
+    this.setAuth();
     const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEE + 'userid-' + userId;
 
     console.log('[getEmployeeByUserId] - path: ', path);
@@ -139,7 +138,7 @@ class Cornerstone {
   }
 
   async updateEmployeeByUserId({id, data}) {
-    this.getAuth();
+    this.setAuth();
     const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEE + 'id-' + id;
     console.log('[updateEmployeeByUserId] - path: ', path);
 
@@ -204,7 +203,7 @@ class Cornerstone {
       }
     };
 
-    this.getAuth();
+    this.setAuth();
     const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_KEYCODE;
     console.log('[postKeycodeUserId] - path: ', path);
 
