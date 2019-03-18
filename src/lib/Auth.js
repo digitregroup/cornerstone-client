@@ -102,9 +102,7 @@ class Auth {
 
     const baseUrl = this.getBaseUrl({corpname: this.corpname});
 
-    const path = baseUrl + httpUrl + '?userName={username}&alias={alias}'
-      .replace('{username}', this.username)
-      .replace('{alias}', this.alias + Date.now());
+    const path = `${baseUrl}${httpUrl}?userName=${this.username}&alias=${this.alias + Date.now()}`;
 
     try {
       const connection = await this.setConnection({
@@ -159,7 +157,7 @@ class Auth {
 
       return file;
     }
-    file && console.log('3', file);
+
     return null;
   }
 

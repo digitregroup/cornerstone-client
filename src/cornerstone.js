@@ -1,6 +1,6 @@
-const config      = require('../config/common')();
-const Auth        = require('./lib/Auth');
-const querystring = require('querystring');
+const config = require('../config/common')();
+const Auth   = require('./lib/Auth');
+
 
 class Cornerstone {
 
@@ -14,6 +14,10 @@ class Cornerstone {
     this.auth      = null;
   }
 
+  /**
+   * Set Auth with params
+   * @returns {null}
+   */
   setAuth() {
     if (this.auth !== null) {
       return this.auth;
@@ -30,6 +34,12 @@ class Cornerstone {
     return this.auth;
   }
 
+  /**
+   * Set signature for request
+   * @param httpUrl
+   * @param method
+   * @returns {Promise<*>}
+   */
   async getConnectionSession({httpUrl, method}) {
 
     const session = await this.auth.setSession({dateUTC: this.dateTime});
@@ -55,6 +65,12 @@ class Cornerstone {
     });
   }
 
+  /**
+   * Main method for reporting request
+   * @param request
+   * @param url
+   * @returns {Promise<*>}
+   */
   async getReporting({request, url}) {
     this.setAuth();
     const path = this.auth.getBaseUrl({corpname: this.corpname}) + url + request;
@@ -73,45 +89,80 @@ class Cornerstone {
     } catch (e) {
       console.log('[getReporting] - Error:', e.response.data);
     }
-    console.log('erere');
+
     return null;
   }
 
+  /**
+   * Get reporting user by user email
+   * @param email
+   * @returns {Promise<*>}
+   */
   async getReportingUserByEmail({email}) {
-    const request = "?$filter=user_email eq '{email}'".replace('{email}', email);
-    const url     = config.CORNERSTONE_REPORTING_USER;
 
-    return await this.getReporting({request: request, url});
+    return await this.getReporting({
+      request: "?$filter=user_email eq '{email}'".replace('{email}', email),
+      url:     config.CORNERSTONE_REPORTING_USER
+    });
   }
 
+  /**
+   * get user reporting by user_id
+   * @param user_id
+   * @returns {Promise<*>}
+   */
   async getReportingByUserId({user_id}) {
-    const request = "?$filter=user_id eq {user_id}".replace('{user_id}', user_id);
-    const url     = config.CORNERSTONE_REPORTING_USER;
 
-    return await this.getReporting({request: request, url: url});
+    return await this.getReporting({
+      request: "?$filter=user_id eq {user_id}".replace('{user_id}', user_id),
+      url:     config.CORNERSTONE_REPORTING_USER
+    });
   }
 
+  /**
+   * Get reporting by user_ref
+   * @param user_ref
+   * @returns {Promise<*>}
+   */
   async getReportingByUserRef({user_ref}) {
-    const request = "?$filter=user_ref eq '{user_ref}'".replace('{user_ref}', user_ref);
-    const url     = config.CORNERSTONE_REPORTING_USER;
 
-    return await this.getReporting({request: request, url: url});
+    return await this.getReporting({
+      request: "?$filter=user_ref eq '{user_ref}'".replace('{user_ref}', user_ref),
+      url:     config.CORNERSTONE_REPORTING_USER
+    });
   }
 
+  /**
+   * Get keycode reporting by user_id
+   * @param user_id
+   * @returns {Promise<*>}
+   */
   async getReportingKeycodeByUserId({user_id}) {
-    const request = "?$filter=tu_contact_user_id eq {user_id}".replace('{user_id}', user_id);
-    const url     = config.CORNERSTONE_REPORTING_KEYCODE;
 
-    return await this.getReporting({request: request, url: url});
+    return await this.getReporting({
+      request: "?$filter=tu_contact_user_id eq {user_id}".replace('{user_id}', user_id),
+      url:     config.CORNERSTONE_REPORTING_KEYCODE
+    });
   }
 
+  /**
+   * Get employee reporting by user_ref
+   * @param user_ref
+   * @returns {Promise<*>}
+   */
   async getReportingKeycodeByUserRef({user_ref}) {
-    const request = "?$filter=tu_training_unit_key_code eq '{user_ref}'".replace('{user_ref}', user_ref);
-    const url     = config.CORNERSTONE_REPORTING_KEYCODE;
 
-    return await this.getReporting({request: request, url: url});
+    return await this.getReporting({
+      request: "?$filter=tu_training_unit_key_code eq '{user_ref}'".replace('{user_ref}', user_ref),
+      url:     config.CORNERSTONE_REPORTING_KEYCODE
+    });
   }
 
+  /**
+   * Get employee reporting by userId
+   * @param userId
+   * @returns {Promise<*>}
+   */
   async getEmployeeByUserId({userId}) {
     this.setAuth();
     const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEE + 'userid-' + userId;
@@ -235,6 +286,35 @@ class Cornerstone {
     const dateTimeUTC = new Date().toISOString();
 
     return dateTimeUTC.substring(0, dateTimeUTC.length - 1);
+  }
+
+  /**
+   * Get Catalog
+   * @returns {Promise<*>}
+   */
+  async getCatalog() {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_CATALOG_SEARCH;
+
+    console.log('[getCatalog] - path: ', path);
+
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_CATALOG_SEARCH,
+      method:  'GET'
+    });
+
+    try {
+      const catalogObject = await connectionSession.get(path);
+      if (catalogObject.status === 200) {
+        return catalogObject.data.data;
+      } else {
+        console.log('[getCatalog] - Error: ', JSON.stringify(connectionSession));
+      }
+    } catch (e) {
+      console.log('[getCatalog] - Error: ', e.response.data)
+    }
+
+    return null;
   }
 }
 
