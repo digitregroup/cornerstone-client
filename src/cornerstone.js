@@ -16,7 +16,7 @@ class Cornerstone {
 
   /**
    * Set Auth with params
-   * @returns {null}
+   * @returns {Auth}
    */
   setAuth() {
     if (this.auth !== null) {
@@ -36,8 +36,8 @@ class Cornerstone {
 
   /**
    * Set signature for request
-   * @param httpUrl
-   * @param method
+   * @param {string} httpUrl
+   * @param {string} method http
    * @returns {Promise<*>}
    */
   async getConnectionSession({httpUrl, method}) {
@@ -66,9 +66,9 @@ class Cornerstone {
   }
 
   /**
-   * Main method for reporting request
-   * @param request
-   * @param url
+   * REPORTING - Main method for request reporting
+   * @param {string} request
+   * @param {string} url
    * @returns {Promise<*>}
    */
   async getReporting({request, url}) {
@@ -81,21 +81,21 @@ class Cornerstone {
     });
 
     try {
-      const userObject = await connectionSession.get(path);
-      if (userObject.status === 200 || userObject.status === 201) {
-        console.log('[getReporting] - response: ', userObject.data);
-        return userObject.data.value[0];
+      const response = await connectionSession.get(path);
+      if (response.status === 200 || response.status === 201) {
+        console.log('[getReporting] - response: ', response.data);
+        return response.data.value[0];
       }
     } catch (e) {
       console.log('[getReporting] - Error:', e.response.data);
     }
-
     return null;
   }
 
   /**
-   * Get reporting user by user email
-   * @param email
+   * Get all user data reporting with email
+   * Return see src/models/wp_rpt_user.json
+   * @param {string} email
    * @returns {Promise<*>}
    */
   async getReportingUserByEmail({email}) {
@@ -107,8 +107,9 @@ class Cornerstone {
   }
 
   /**
-   * get user reporting by user_id
-   * @param user_id
+   * Get all user data reporting by user_id
+   * Return see src/models/wp_rpt_user.json
+   * @param {int} user_id
    * @returns {Promise<*>}
    */
   async getReportingByUserId({user_id}) {
@@ -120,8 +121,9 @@ class Cornerstone {
   }
 
   /**
-   * Get reporting by user_ref
-   * @param user_ref
+   * Get all user data reporting by user_ref
+   * Return see src/models/wp_rpt_user.json
+   * @param {string} user_ref
    * @returns {Promise<*>}
    */
   async getReportingByUserRef({user_ref}) {
@@ -133,8 +135,9 @@ class Cornerstone {
   }
 
   /**
-   * Get keycode reporting by user_id
-   * @param user_id
+   * Main view to get training unit key code data with user_id
+   * Return see src/models/vw_rpt_training_unit_key_code.json
+   * @param {int} user_id
    * @returns {Promise<*>}
    */
   async getReportingKeycodeByUserId({user_id}) {
@@ -146,8 +149,9 @@ class Cornerstone {
   }
 
   /**
-   * Get employee reporting by user_ref
-   * @param user_ref
+   * Main view to get training unit key code data with user_iduser_ref
+   * Return see src/models/vw_rpt_training_unit_key_code.json
+   * @param {string} user_ref
    * @returns {Promise<*>}
    */
   async getReportingKeycodeByUserRef({user_ref}) {
@@ -159,8 +163,57 @@ class Cornerstone {
   }
 
   /**
-   * Get employee reporting by userId
-   * @param userId
+   * Main view to get training data by date start
+   * Return see src/models/vw_rpt_training.json
+   * @param {string} dateStart YYYY-MM-DD
+   * @returns {Promise<*>}
+   */
+  async getReportingTraining({dateStart}) {
+
+    return await this.getReporting({
+      request: `?$filter=lo_start_dt gt cast('${dateStart}', Edm.DateTimeOffset)`,
+      url:     config.CORNERSTONE_REPORTING_TRAINING
+    });
+  }
+
+  /**
+   * Main view to get all user transcript related data
+   * Return see src/models/vw_rpt_transcript.json
+   * @param {string} dateStart YYYY-MM-DD
+   * @returns {Promise<*>}
+   */
+  async getReportingTranscriptByObjectId({objectId}) {
+
+    return await this.getReporting({
+      request: `?$filter=transc_object_id eq ${objectId}`,
+      url:     config.CORNERSTONE_REPORTING_TRANSCRIPT
+    });
+  }
+
+  /**
+   * REPORTING - Main method for REST request
+   * @param {Axios} connectionSession
+   * @param {string} path
+   * @returns {Promise<*>}
+   */
+  async getRestApi({connectionSession, path}) {
+    try {
+      const response = await connectionSession.get(path);
+      if (response.status === 200) {
+        return response.data.data;
+      } else {
+        console.log('[getRestApi] - Error: ', JSON.stringify(connectionSession));
+      }
+    } catch (e) {
+      console.log('[getRestApi] - Error: ', e.response.data)
+    }
+
+    return null;
+  }
+
+  /**
+   * REST - Returns the core Employee record containing bulk of the information about the Employee.
+   * @param {string} userId Valid User id, Cornerstone Internal Integer Id
    * @returns {Promise<*>}
    */
   async getEmployeeByUserId({userId}) {
@@ -174,20 +227,15 @@ class Cornerstone {
       method:  'GET'
     });
 
-    try {
-      const userObject = await connectionSession.get(path);
-      if (userObject.status === 200) {
-        return userObject.data.data;
-      } else {
-        console.log('[getEmployeeByUserId] - Error: ', JSON.stringify(connectionSession));
-      }
-    } catch (e) {
-      console.log('[getEmployeeByUserId] - Error: ', e)
-    }
-
-    return null;
+    return this.getRestApi({connectionSession: connectionSession, path: path})
   }
 
+  /**
+   * This end point will update core employee record
+   * @param {int} id User id, Cornerstone Internal Integer Id
+   * @param {object} data See src/models/employee.json
+   * @returns {Promise<*>}
+   */
   async updateEmployeeByUserId({id, data}) {
     this.setAuth();
     const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEE + 'id-' + id;
@@ -214,7 +262,7 @@ class Cornerstone {
   }
 
   /**
-   * Set unit for key code
+   * Create Training Unit Assignment
    * @param assignmentTitle {string} String content
    * @param amount {int}
    * @param expirationDate {date} "YYYY-MM-DD"
@@ -289,13 +337,13 @@ class Cornerstone {
   }
 
   /**
-   * Get Catalog
+   * The purpose of the Catalog Search web service is to search & retrieve training data
+   * Return all catalog
    * @returns {Promise<*>}
    */
   async getCatalog() {
     this.setAuth();
     const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_CATALOG_SEARCH;
-
     console.log('[getCatalog] - path: ', path);
 
     const connectionSession = await this.getConnectionSession({
@@ -303,18 +351,123 @@ class Cornerstone {
       method:  'GET'
     });
 
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
+   * The Get Details operation allows the ability for an active user to drill down and obtain
+   * a learning object’s (LO’s) standard and custom field data.
+   * {ObjectId} The Cornerstone generated Learning Object ID (LO ID).
+   * @returns {Promise<*>}
+   */
+  async getLearningData({ObjectId}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_LEARNING_OBJECT + '?ObjectId=' + ObjectId;
+    console.log('[getCatalog] - path: ', path);
+
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_LEARNING_OBJECT,
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
+   * The Transcript Search web service gives you the ability to retrieve users’ transcript information
+   * from the Cornerstone Learning Management System (LMS).
+   * {LOID} Learning Object (LO) Type that need to be retrieved.
+   * @returns {Promise<*>}
+   */
+  async getLearningObjectTranscript({LOID}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_LEARNING_OBJECT_TRANSCRIPT + '?LOID=' + LOID;
+    console.log('[getLearningObjectTranscript] - path: ', path);
+
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_LEARNING_OBJECT_TRANSCRIPT,
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
+   * Enrolls users to a Learning Object (LO)
+   * @param {LOID} Learning Object (LO)
+   * @returns {Promise<*>}
+   */
+  async postEnrollUserToAnlearningObject({LOID, userId}) {
+    const data = {
+      "data": {
+        "record": [
+          {
+            "Training":               [
+              {
+                "LOID": LOID
+              }
+            ],
+            "ProxyType":              "Standard",
+            "ForceEnrollment":        false,
+            "AssignmentStatus":       "Approve",
+            "Availabilities":         [
+              {
+                "__type":               "UserAvailability:www.CornerStoneOnDemand.com/Services",
+                "IncludeSubs":          false,
+                "PreApproved":          true,
+                "RegisterUponApproval": false,
+                "Id":                   userId
+              }
+            ],
+            "EmailConfiguration":     "NoEmails",
+            "ManageSeatAvailability": "IncreaseAvailableSeats"
+          }
+        ]
+      }
+    };
+
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_ENROLL_LO;
+    console.log('[postEnrollUserToAnlearningObject] - path: ', path);
+
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_ENROLL_LO,
+      method:  'POST'
+    });
+    console.log('[postEnrollUserToAnlearningObject] - data: ', data);
+
     try {
-      const catalogObject = await connectionSession.get(path);
-      if (catalogObject.status === 200) {
-        return catalogObject.data.data;
+      const userObject = await connectionSession.post(path, data);
+      if (userObject.status === 200) {
+        return userObject.data;
       } else {
-        console.log('[getCatalog] - Error: ', JSON.stringify(connectionSession));
+        console.log('[postEnrollUserToAnlearningObject] - Error: ', JSON.stringify(connectionSession));
       }
     } catch (e) {
-      console.log('[getCatalog] - Error: ', e.response.data)
+      console.log('[postEnrollUserToAnlearningObject] - Error: ', e.response.data)
     }
 
     return null;
+  }
+
+  /**
+   * The Proxy Enrollment Status web service gets proxy enrollment statuses based on a given date range.
+   * @param {string} fromDate YYYY-MM-DD
+   * @param {string} toDate YYYY-MM-DD
+   * @returns {Promise<*>}
+   */
+  async getEnrollStatus({fromDate, toDate}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_ENROLL_LO_STATUS
+      + `?FromDate=${fromDate}&ToDate=${toDate}`;
+    console.log('[getLearningObjectTranscript] - path: ', path);
+
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_ENROLL_LO_STATUS,
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
   }
 }
 

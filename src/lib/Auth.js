@@ -3,6 +3,9 @@ const axios  = require('axios');
 const fs     = require('fs');
 const config = require('../../config/common')();
 
+/**
+ * Set authentification and session for request to Cornerstone api
+ */
 class Auth {
 
   constructor({apiId, apiSecret, username, alias, corpname}) {
@@ -14,9 +17,9 @@ class Auth {
   }
 
   /**
-   * Create signature
-   * @param httpUrl {string} api path like '/services/api/sts/session'
-   * @param dateUTC {string} like '2019-03-11T17:05:00.969'
+   * Create signature for authentification
+   * @param {string} httpUrl api path like '/services/api/sts/session'
+   * @param {string} dateUTC like '2019-03-11T17:05:00.969'
    * @returns {string}
    */
   getSignature({httpUrl, dateUTC}) {
@@ -31,6 +34,15 @@ class Auth {
     return hmac.update(stringToSign).digest('base64');
   }
 
+  /**
+   * Create signature for request reporting or request REST
+   * @param {string} method http
+   * @param {string} sessionToken
+   * @param {string} sessionSecret
+   * @param {string} httpUrl
+   * @param {string} dateUTC
+   * @returns {string}
+   */
   getSignatureSession({method, sessionToken, sessionSecret, httpUrl, dateUTC}) {
     const sessionTokenKey = 'x-csod-session-token:' + sessionToken;
     const dateCsod        = 'x-csod-date:' + dateUTC;
@@ -63,6 +75,14 @@ class Auth {
     });
   }
 
+  /**
+   * Create Axios object
+   * @param {string} baseUrl
+   * @param {string} dateUTC
+   * @param {string} token
+   * @param {string} signature
+   * @returns {Promise<*>}
+   */
   async setConnectionSession({baseUrl, dateUTC, token, signature}) {
 
     return await axios.create({
@@ -77,7 +97,8 @@ class Auth {
   }
 
   /**
-   * Get session from cornerstone
+   * Set session authentification from cornerstone
+   * @param {string} dateUTC
    * @returns {Promise<{alias: *, expiresOn: *, secret: *, status: number | string, token: *}>}
    */
   async setSession({dateUTC}) {
@@ -136,7 +157,7 @@ class Auth {
         return session;
       }
     } catch (e) {
-      console.log(e);
+      console.log('[setSession] - Error: ', e);
     }
   }
 
@@ -149,6 +170,10 @@ class Auth {
     return config.CORNERSTONE_BASE_URL.replace('{corpname}', corpname);
   }
 
+  /**
+   * Read tmp file session authentification
+   * @returns {*}
+   */
   readSession() {
     let file;
     if (fs.existsSync(config.TMP_PATH + 'session.json')) {
