@@ -27,7 +27,7 @@ class Auth {
     const apiKeyCsod   = 'x-csod-api-key:' + this.apiId;
     const dateCsod     = 'x-csod-date:' + dateUTC;
     const stringToSign = httpMethod + '\n' + apiKeyCsod + '\n' + dateCsod + '\n' + httpUrl;
-    const secretKey    = new Buffer(this.apiSecret, 'base64');
+    const secretKey    = Buffer.from(this.apiSecret, 'base64');
     const hmac         = crypto.createHmac('sha512', secretKey);
     console.log('[getSignature] - signature: ', JSON.stringify(stringToSign));
 
@@ -47,7 +47,7 @@ class Auth {
     const sessionTokenKey = 'x-csod-session-token:' + sessionToken;
     const dateCsod        = 'x-csod-date:' + dateUTC;
     const stringToSign    = method + '\n' + dateCsod + '\n' + sessionTokenKey + '\n' + httpUrl;
-    const secretKey       = new Buffer(sessionSecret, 'base64');
+    const secretKey       = Buffer.from(sessionSecret, 'base64');
     const hmac            = crypto.createHmac('sha512', secretKey);
     console.log('[getSignatureSession] - signature: ', JSON.stringify(stringToSign));
 
@@ -189,5 +189,4 @@ class Auth {
 
 }
 
-module
-  .exports = Auth;
+module.exports = Auth;
