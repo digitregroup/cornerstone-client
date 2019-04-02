@@ -1,0 +1,27 @@
+vw_rpt_training_unit_key_code: {
+  tu_code_id: Number
+  tu_training_unit_key_code: String
+  tu_key_code_training_units_redeemed_total: Number
+  tu_key_code_training_units_assigned_total: Number
+  tu_key_code_unused_balance_total: Number
+  tu_value_unused_balance: Number
+  tu_value_unused_balance_currency_code: String
+  tu_id: Number
+  tu_training_units_per_assignment_cycle: Number
+  tu_training_unit_acquired_dt_per_assignment_cycle: Date
+  tu_training_unit_assignment_sequence_number: Number
+  tu_training_unit_assignment_title: String
+  tu_training_unit_assignment_creation_dt: Date
+  tu_training_unit_expiration_dt_per_assignment_cycle: Date
+  tu_price_paid_per_training_unit: Number
+  tu_price_paid_per_training_unit_currency_code: String
+  tu_training_units_purchased: Number
+  tu_training_unit_purchase_dt: Date
+  tu_training_unit_purchase_transaction_id: String
+  tu_training_unit_purchase_by_id: Number
+  tu_training_unit_assignment_type_id: Number
+  tu_training_unit_assignment_instance_id: Number
+  tu_training_unit_purchase_by: String
+  tu_contact_user_id: Number
+  tu_contact_full_name: String
+}

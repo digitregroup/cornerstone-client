@@ -117,3 +117,9 @@ typings/
 
 
 \.idea/
+
+node_modules/
+
+test/tests\.test\.js
+
+tmp/session\.json
