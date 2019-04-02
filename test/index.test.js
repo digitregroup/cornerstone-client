@@ -5,6 +5,7 @@ const Auth        = require('../src/lib/Auth');
 const Cornerstone = require('../src/cornerstone');
 const employee    = require('../src/models/employee');
 
+// Params pilot
 const params = {
   apiId:     '',
   apiSecret: '',
@@ -13,12 +14,11 @@ const params = {
   corpname:  ''
 };
 
-// params prod
-const test_reporting_user_id    = 0;
+const test_reporting_user_id    = 1;
 const test_reporting_user_ref   = '';
 const test_reporting_user_email = '';
 
-const test_rest_id                 = 0;
+const test_rest_id                 = 1;
 const test_rest_userId             = '';
 const test_signature_result        = '';
 const test_signatureSession_result = '';
@@ -89,6 +89,30 @@ describe('Test Reporting user', () => {
 });
 
 //*****************************************/
+// REPORTING Training
+//*****************************************/
+describe('Test Reporting training', () => {
+  it('[getReportingTraining] - It should be true', async () => {
+    const trainings = await cornerstone.getReportingTraining({dateStart: '2019-04-01'});
+    //console.log(trainings);
+    return expect(trainings.lo_type).to.be.eql('Session');
+  });
+});
+
+//*****************************************/
+// REPORTING Transcript
+//*****************************************/
+describe('Test Reporting transcript', () => {
+  it('[getReportingTranscriptByObjectId] - It should be true', async () => {
+    const transcript = await cornerstone.getReportingTranscriptByObjectId({objectId: '944034f8-e6d3-4227-8f42-c11e9b729a08'});
+    //console.log(transcript);
+    return expect(transcript.user_lo_status_id).to.be.eql(2048);
+  });
+});
+
+
+
+//*****************************************/
 // REPORTING Keycode
 //*****************************************/
 describe('Test Reporting key_code', () => {
@@ -114,18 +138,84 @@ describe('Test REST employees', () => {
     const user = await cornerstone.getEmployeeByUserId({userId: test_rest_userId});
     console.log(user);
     return expect(user.userId).to.be.eql(test_rest_userId);
-  });
+  }).timeout(10000);
 
-  it('[updateEmployee] - It should be true', async () => {
-    employee.personalEmail = 'greef@gmail.com';
-    const user             = await cornerstone.updateEmployeeByUserId({
-      id:   test_rest_id,
-      data: {"personalEmail": 'dominique@gmail.com'}
-      //data: {"userId": 'DIGIT2'}
+  // it('[updateEmployee] - It should be true', async () => {
+  //   const email = 'dominique.lopez3@digitregroup.com';
+  //   const user             = await cornerstone.updateEmployeeByUserId({
+  //     id:   4755,
+  //     //data: {"primaryEmail": email}
+  //     data: {"userId": 'FICE6'}
+  //   });
+  //   console.log(user);
+  //   return expect(user.status).to.be.eql('Success');
+  // });
+
+});
+
+//*****************************************/
+// REST Catalog Search
+//*****************************************/
+describe('Test REST catalog search', () => {
+  it('[getCatalog] - It should be true', async () => {
+    const catalog = await cornerstone.getCatalog();
+    console.log(JSON.stringify(catalog));
+
+    return expect(catalog[0].Availabilities[0].__type).to.be.eql('OUAvailability:www.CornerStoneOnDemand.com/Services');
+  }).timeout(10000);
+});
+
+//*****************************************/
+// REST Learning object
+//*****************************************/
+describe('Test REST learning object', () => {
+  it('[getLearningObject] - It should be true', async () => {
+    const learningObject = await cornerstone.getLearningData({ObjectId: '1a7b8e61-e30f-4f8c-a2dd-71c95da55f37'});
+
+    console.log(JSON.stringify(learningObject[0]));
+
+    return expect(learningObject[0].Result).to.be.eql('Success');
+  }).timeout(10000);
+});
+
+
+//*****************************************/
+// REST Learning object transcript
+//*****************************************/
+describe('Test REST learning object transcript', () => {
+  it('[getLearningObjectTranscript] - It should be true', async () => {
+    const getLearningObjectTranscript = await cornerstone.getLearningObjectTranscript({LOID: '2141e19e-c862-456a-930b-7a9c6d11b0d0'});
+
+    console.log(getLearningObjectTranscript[0].TranscriptItem.Transcripts[0]);
+
+    return expect(getLearningObjectTranscript[0].Result).to.be.eql('Success');
+  }).timeout(10000);
+});
+
+//*****************************************/
+// REST Enroll LO
+//*****************************************/
+describe('Test REST enroll LO', () => {
+  // it('[postEnrollUserToAnlearningObject] - It should be true', async () => {
+  //   const enroll = await cornerstone.postEnrollUserToAnlearningObject({
+  //     LOID: "944034f8-e6d3-4227-8f42-c11e9b729a08",
+  //     userId: 'FICE6'
+  //   });
+  //   console.log(JSON.stringify(enroll));
+  //
+  //   return expect(enroll.status).to.be.eql(201);
+  // });
+
+
+  it('[getEnrollStatus] - It should be true', async () => {
+    const enrollStatus = await cornerstone.getEnrollStatus({
+      fromDate: '2019-03-19',
+      toDate: '2019-03-20'
     });
-    console.log(user);
-    return expect(user.status).to.be.eql('Success');
-  });
+    console.log(enrollStatus);
+
+    return expect(enrollStatus).to.be.eql(enrollStatus);
+  }).timeout(10000);
 });
 
 //*****************************************/
@@ -133,15 +223,17 @@ describe('Test REST employees', () => {
 //*****************************************/
 describe('Test REST keycode', () => {
   it('[updateEmployee] - It should be true', async () => {
-    // TODO on ne peut que poster une fois, ensuite c'est erreur duplicate keycode
+    //TODO on ne peut que poster une fois, ensuite c'est erreur duplicate keycode
+    //
     // const user = await cornerstone.postKeycodeUserId({
     //   amount: 20,
-    //   keyCode: test_keycodeId,
-    //   userId: test_keycodeId,
+    //   keyCode: '',
+    //   userId: '',
     //   expirationDate: '2019-03-31',
     //   assignmentTitle: 'Test Dominique'
     // });
-    console.log(user);
-    return expect(user.status).to.be.eql('Success');
+    //
+    // console.log(user);
+    // return expect(user.status).to.be.eql('Success');
   });
 });

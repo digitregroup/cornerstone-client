@@ -1,0 +1,41 @@
+{
+  "Availabilities": [
+    {
+      "__type": "OUAvailability:www.CornerStoneOnDemand.com/Services",
+      "IncludeSubs": true,
+      "Id": "Digit Re Group",
+      "SubType": "Entreprise"
+    }
+  ],
+  "AvailableLanguages": [
+    {
+      "ID": "fr-FR",
+      "Name": "French (France)"
+    }
+  ],
+  "Competencies": [],
+  "CreateDate": "2019-02-21T15:54:47+0000",
+  "Customfields": [],
+  "Description": "<p>VENEZ TOUS VOUS ECLATER ;))</p><p>&nbsp;</p>",
+  "Duration": 840,
+  "Instructors": null,
+  "Location": null,
+  "ModifyDate": "2019-02-21T15:57:22+0000",
+  "ObjectId": "5da41602-d947-42f1-8460-406f2cbb384a",
+  "Price": 0,
+  "Provider": "Fice",
+  "Skills": [],
+  "Subjects": [
+    {
+      "Id": "539",
+      "ParentId": "",
+      "ParentTitle": null,
+      "Title": "TECHNIQUE"
+    }
+  ],
+  "Title": "MARCHAND DE BIENS : un investisseur à part",
+  "TrainingPurposes": [],
+  "TrainingSubType": "Événement",
+  "TrainingType": "Event",
+  "Version": ""
+}
