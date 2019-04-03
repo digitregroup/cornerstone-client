@@ -266,6 +266,41 @@ class Cornerstone {
   }
 
   /**
+   * REST - This API returns employees and the groups in their employee profile.
+   * @param {int} pagenumber
+   * @returns {Promise<*>}
+   */
+  async getEmployeesGroups({pagenumber}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_GROUPS + '?pagenumber=' + pagenumber;
+    console.log('[getEmployeesGroups] - path: ', path);
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_GROUPS,
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
+   * REST - This API returns employees and the groups  by user_id employees.
+   * @param {string} user_id
+   * @returns {Promise<*>}
+   */
+  async getEmployeesGroupsByUserId({user_id}) {
+    this.setAuth();
+
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_GROUPS_BY_USER.replace('{user_id}', user_id);
+    console.log('[getEmployeesGroupsByUserId] - path: ', path);
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_GROUPS_BY_USER.replace('{user_id}', user_id),
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
    * REST - This end point will update core employee record
    * @param {int} id User id, Cornerstone Internal Integer Id
    * @param {object} data See src/models/employee.json
