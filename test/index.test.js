@@ -26,6 +26,8 @@ const test_keycodeId               = '';
 
 const cornerstone = new Cornerstone(params);
 
+const cornerstone = new Cornerstone(params);
+
 describe('Test signatures', () => {
   it('[getSignature] - It should be true', () => {
     const auth      = new Auth(params);
@@ -129,6 +131,25 @@ describe('Test Reporting key_code', () => {
     return expect(keycode.tu_training_unit_key_code).to.be.eql(test_reporting_user_ref);
   });
 });
+
+//*****************************************/
+// REST Employee Custom field
+//*****************************************/
+describe('Test REST custom fields', () => {
+  it('[getEmployeesCustomFields] - It should be true', async () => {
+    const customFields = await cornerstone.getEmployeesCustomFields({pagenumber: 1});
+    console.log(customFields);
+    return expect(customFields.size).to.be.eql(50);
+  }).timeout(10000);
+
+  it('[getEmployeesCustomFieldsByUserId] - It should be true', async () => {
+    const customFields = await cornerstone.getEmployeesCustomFieldsByUserId({user_id: test_rest_userId});
+    console.log(customFields);
+    return expect(customFields.userId).to.be.eql(test_rest_userId);
+  }).timeout(10000);
+
+});
+
 
 //*****************************************/
 // REST Employee

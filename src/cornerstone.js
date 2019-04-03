@@ -231,6 +231,41 @@ class Cornerstone {
   }
 
   /**
+   * REST - This service returns custom fields data for employees.
+   * @param {int} pagenumber
+   * @returns {Promise<*>}
+   */
+  async getEmployeesCustomFields({pagenumber}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_CUSTOM_FIELDS + '?pagenumber=' + pagenumber;
+    console.log('[getEmployeesCustomFields] - path: ', path);
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_CUSTOM_FIELDS,
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
+   * REST - This service returns custom fields data by user_id employees.
+   * @param {string} user_id
+   * @returns {Promise<*>}
+   */
+  async getEmployeesCustomFieldsByUserId({user_id}) {
+    this.setAuth();
+
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_CUSTOM_FIELDS_BY_USER.replace('{user_id}', user_id);
+    console.log('[getEmployeesCustomFieldsByUserId] - path: ', path);
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_CUSTOM_FIELDS_BY_USER.replace('{user_id}', user_id),
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
    * REST - This end point will update core employee record
    * @param {int} id User id, Cornerstone Internal Integer Id
    * @param {object} data See src/models/employee.json
