@@ -93,7 +93,7 @@ class Cornerstone {
   }
 
   /**
-   * Get all user data reporting with email
+   * REPORTING - Get all user data reporting with email
    * Return see src/models/wp_rpt_user.json
    * @param {string} email
    * @returns {Promise<*>}
@@ -107,7 +107,7 @@ class Cornerstone {
   }
 
   /**
-   * Get all user data reporting by user_id
+   * REPORTING - Get all user data reporting by user_id
    * Return see src/models/wp_rpt_user.json
    * @param {int} user_id
    * @returns {Promise<*>}
@@ -121,7 +121,7 @@ class Cornerstone {
   }
 
   /**
-   * Get all user data reporting by user_ref
+   * REPORTING - Get all user data reporting by user_ref
    * Return see src/models/wp_rpt_user.json
    * @param {string} user_ref
    * @returns {Promise<*>}
@@ -135,7 +135,7 @@ class Cornerstone {
   }
 
   /**
-   * Main view to get training unit key code data with user_id
+   * REPORTING - Main view to get training unit key code data with user_id
    * Return see src/models/vw_rpt_training_unit_key_code.json
    * @param {int} user_id
    * @returns {Promise<*>}
@@ -149,7 +149,7 @@ class Cornerstone {
   }
 
   /**
-   * Main view to get training unit key code data with user_iduser_ref
+   * REPORTING - Main view to get training unit key code data with user_iduser_ref
    * Return see src/models/vw_rpt_training_unit_key_code.json
    * @param {string} user_ref
    * @returns {Promise<*>}
@@ -163,7 +163,7 @@ class Cornerstone {
   }
 
   /**
-   * Main view to get training data by date start
+   * REPORTING - Main view to get training data by date start
    * Return see src/models/vw_rpt_training.json
    * @param {string} dateStart YYYY-MM-DD
    * @returns {Promise<*>}
@@ -177,7 +177,7 @@ class Cornerstone {
   }
 
   /**
-   * Main view to get all user transcript related data
+   * REPORTING - Main view to get all user transcript related data
    * Return see src/models/vw_rpt_transcript.json
    * @param {string} dateStart YYYY-MM-DD
    * @returns {Promise<*>}
@@ -231,7 +231,7 @@ class Cornerstone {
   }
 
   /**
-   * This end point will update core employee record
+   * REST - This end point will update core employee record
    * @param {int} id User id, Cornerstone Internal Integer Id
    * @param {object} data See src/models/employee.json
    * @returns {Promise<*>}
@@ -262,7 +262,7 @@ class Cornerstone {
   }
 
   /**
-   * Create Training Unit Assignment
+   * REST - Create Training Unit Assignment
    * @param assignmentTitle {string} String content
    * @param amount {int}
    * @param expirationDate {date} "YYYY-MM-DD"
@@ -337,7 +337,7 @@ class Cornerstone {
   }
 
   /**
-   * The purpose of the Catalog Search web service is to search & retrieve training data
+   * REST - The purpose of the Catalog Search web service is to search & retrieve training data
    * Return all catalog
    * @returns {Promise<*>}
    */
@@ -355,7 +355,7 @@ class Cornerstone {
   }
 
   /**
-   * The Get Details operation allows the ability for an active user to drill down and obtain
+   * REST - The Get Details operation allows the ability for an active user to drill down and obtain
    * a learning object’s (LO’s) standard and custom field data.
    * {ObjectId} The Cornerstone generated Learning Object ID (LO ID).
    * @returns {Promise<*>}
@@ -374,7 +374,7 @@ class Cornerstone {
   }
 
   /**
-   * The Transcript Search web service gives you the ability to retrieve users’ transcript information
+   * REST - The Transcript Search web service gives you the ability to retrieve users’ transcript information
    * from the Cornerstone Learning Management System (LMS).
    * {LOID} Learning Object (LO) Type that need to be retrieved.
    * @returns {Promise<*>}
@@ -393,7 +393,7 @@ class Cornerstone {
   }
 
   /**
-   * Enrolls users to a Learning Object (LO)
+   * REST - Enrolls users to a Learning Object (LO)
    * @param {LOID} Learning Object (LO)
    * @returns {Promise<*>}
    */
@@ -451,7 +451,7 @@ class Cornerstone {
   }
 
   /**
-   * The Proxy Enrollment Status web service gets proxy enrollment statuses based on a given date range.
+   * REST - The Proxy Enrollment Status web service gets proxy enrollment statuses based on a given date range.
    * @param {string} fromDate YYYY-MM-DD
    * @param {string} toDate YYYY-MM-DD
    * @returns {Promise<*>}
