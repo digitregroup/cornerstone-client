@@ -84,7 +84,7 @@ class Cornerstone {
       const response = await connectionSession.get(path);
       if (response.status === 200 || response.status === 201) {
         console.log('[getReporting] - response: ', response.data);
-        return response.data.value[0];
+        return response.data.value;
       }
     } catch (e) {
       console.log('[getReporting] - Error:', e.response.data);
@@ -187,6 +187,33 @@ class Cornerstone {
     return await this.getReporting({
       request: `?$filter=transc_object_id eq ${objectId}`,
       url:     config.CORNERSTONE_REPORTING_TRANSCRIPT
+    });
+  }
+
+  /**
+   * REPORTING - Main view to get custom field dropdow values by id custom field
+   * Return see src/models/vw_rpt_transcript.json
+   * @param {int} custom field id, ex : Pack = 137
+   * @returns {Promise<*>}
+   */
+  async getReportingCustomfieldsById({id}) {
+
+    return await this.getReporting({
+      request: `?$filter=cfvl_field_id eq ${id} and culture_id eq 33`,
+      url:     config.CORNERSTONE_REPORTING_CUSTOM_FIELDS
+    });
+  }
+
+  /**
+   * REPORTING - Main view to get all custom fields dropdow value
+   * Return see src/models/vw_rpt_transcript.json
+   * @returns {Promise<*>}
+   */
+  async getReportingCustomfields() {
+
+    return await this.getReporting({
+      request: `?$filter=culture_id eq 33`,
+      url:     config.CORNERSTONE_REPORTING_CUSTOM_FIELDS
     });
   }
 
