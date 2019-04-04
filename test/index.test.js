@@ -187,17 +187,16 @@ describe('Test REST groups', () => {
 //*****************************************/
 describe('Test REST employees', () => {
   it('[getEmployeeByuserId] - It should be true', async () => {
-    const user = await cornerstone.getEmployeeByUserId({userId: test_rest_userId});
+    const user = await cornerstone.getEmployeeByUserId({userId: "dladmin"});
     console.log(user);
     return expect(user.userId).to.be.eql(test_rest_userId);
   }).timeout(10000);
 
   // it('[updateEmployee] - It should be true', async () => {
-  //   const email = 'dominique.lopez3@digitregroup.com';
+  //   //const email = 'dominique.lopez3@digitregroup.com';
   //   const user             = await cornerstone.updateEmployeeByUserId({
-  //     id:   4755,
-  //     //data: {"primaryEmail": email}
-  //     data: {"userId": 'FICE6'}
+  //     id:   43,
+  //     data: {"customFields": [ { id: 137, name: 'Pack', value: 'Intégral 2019' } ]},
   //   });
   //   console.log(user);
   //   return expect(user.status).to.be.eql('Success');
