@@ -1,7 +1,9 @@
-const crypto = require('crypto');
-const axios  = require('axios');
-const fs     = require('fs');
-const config = require('../../config/common')();
+import crypto from "crypto";
+import axios from "axios";
+import fs from "fs";
+import config0 from "../../config/common";
+
+const config = config0();
 
 /**
  * Set authentification and session for request to Cornerstone api
@@ -112,7 +114,7 @@ class Auth {
       }
     }
 
-    const httpUrl  = config.CORNERSTONE_PATH_SESSION;
+    const httpUrl = config.CORNERSTONE_PATH_SESSION;
 
     const signature = this.getSignature({
       apiId:     this.apiId,
@@ -186,7 +188,6 @@ class Auth {
     return null;
   }
 
-
 }
 
-module.exports = Auth;
+export default Auth;

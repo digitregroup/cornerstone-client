@@ -1,6 +1,7 @@
-const config = require('../config/common')();
-const Auth   = require('./lib/Auth');
+import Auth from "./lib/Auth";
+import config0 from "../config/common";
 
+const config = config0();
 
 class Cornerstone {
 
@@ -613,4 +614,4 @@ class Cornerstone {
   }
 }
 
-module.exports = Cornerstone;
+export default Cornerstone;

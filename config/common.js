@@ -1,5 +1,8 @@
-require('console-stamp')(console, 'HH:MM:ss.l');
-module.exports = () => {
+import console_stamp from "console-stamp";
+
+console_stamp(console, 'HH:MM:ss.l');
+
+export default () => {
   return {
     "TMP_PATH":                                       "tmp/",
     "CORNERSTONE_BASE_URL":                           "https://{corpname}.csod.com",
@@ -22,4 +25,4 @@ module.exports = () => {
     "CORNERSTONE_SERVICE_GROUPS":                     "/services/api/x/users/v1/employees/groups",                      // employee groups
     "CORNERSTONE_SERVICE_GROUPS_BY_USER":             "/services/api/x/users/v1/employees/userid-{user_id}/groups",     // groups by user_id
   };
-};
+}

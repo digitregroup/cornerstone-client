@@ -6,9 +6,13 @@
     "console-stamp": "^0.2.7"
   },
   "description": "Client for Cornerstone api",
-  "main": "index.js",
+  "source": "src/cornerstone.js",
+  "module": "dist/cornerstone.mjs",
+  "unpkg": "dist/cornerstone.umd.js",
+  "main": "dist/cornerstone.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "microbundle --target node --external assert,async_hooks,buffer,child_process,cluster,console,constants,crypto,dgram,dns,domain,events,fs,http,http2,https,inspector,module,net,os,path,perf_hooks,process,punycode,querystring,readline,repl,stream,string_decoder,timers,tls,trace_events,tty,url,util,v8,vm,zlib",
+    "dev": "microbundle --target node --external assert,async_hooks,buffer,child_process,cluster,console,constants,crypto,dgram,dns,domain,events,fs,http,http2,https,inspector,module,net,os,path,perf_hooks,process,punycode,querystring,readline,repl,stream,string_decoder,timers,tls,trace_events,tty,url,util,v8,vm,zlib"
   },
   "repository": {
     "type": "git",
@@ -22,6 +26,7 @@
   "homepage": "https://github.com/digitregroup/cornerstone-client#readme",
   "devDependencies": {
     "chai": "^4.2.0",
+    "microbundle": "^0.11.0",
     "mocha": "^6.0.2"
   }
 }
