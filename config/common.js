@@ -9,6 +9,7 @@ module.exports = () => {
     "CORNERSTONE_REPORTING_TRAINING":                 "/services/api/x/odata/api/views/vw_rpt_training",                // Main view to get training data
     "CORNERSTONE_REPORTING_TRANSCRIPT":               "/services/api/x/odata/api/views/vw_rpt_transcript",              // Main view to get all user transcript related data
     "CORNERSTONE_REPORTING_CUSTOM_FIELDS":            "/services/api/x/odata/api/views/vw_rpt_custom_field_value_local",// Main view to get all user custom fields value
+    "CORNERSTONE_REPORTING_OU":                       "/services/api/x/odata/api/views/vw_rpt_ou",                      // Reporting Organizational Unit (OU) data
     "CORNERSTONE_SERVICE_EMPLOYEE":                   "/services/api/x/users/v1/employees/",                            // This end point will update and return core employee record containing bulk of the information about the employee
     "CORNERSTONE_SERVICE_KEYCODE":                    "/services/api/TrainingUnit/",                                    // Create Training Unit Assignment,
     "CORNERSTONE_SERVICE_CATALOG_SEARCH":             "/services/api/Catalog/GlobalSearch",                             // getRestApi catalog

@@ -149,6 +149,18 @@ class Cornerstone {
   }
 
   /**
+   * REPORTING - Organizational Unit (OU) data
+   * @returns {Promise<*>}
+   */
+  async getReportingOu() {
+
+    return await this.getReporting({
+      request: "",
+      url:     config.CORNERSTONE_REPORTING_OU
+    });
+  }
+
+  /**
    * REPORTING - Main view to get training unit key code data with user_iduser_ref
    * Return see src/models/vw_rpt_training_unit_key_code.json
    * @param {string} user_ref
@@ -353,6 +365,39 @@ class Cornerstone {
       }
     } catch (e) {
       console.log('[getEmployeeByUserId] - Error: ', e.response.data)
+    }
+
+    return null;
+  }
+
+  /**
+   * REST - This end point will create employee record
+   * @param {string} userName
+   * @param {string} firstname
+   * @param {string} lastname
+   * @param {object} OU site and BU
+   * @returns {Promise<null|*>}
+   */
+  async createEmployee({userName, firstname, lastname, ous}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEE;
+    console.log('[createEmployee] - path: ', path);
+
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_EMPLOYEE,
+      method:  'POST'
+    });
+    console.log('[createEmployee] - data to create employee: ', userName, firstname, lastname, ous);
+
+    try {
+      const userObject = await connectionSession.post(path, {userName: userName, firstname: firstname, lastname: lastname, ous: ous});
+      if (userObject.status === 200) {
+        return userObject.data;
+      } else {
+        console.log('[createEmployee] - Error: ', JSON.stringify(connectionSession));
+      }
+    } catch (e) {
+      console.log('[createEmployee] - Error: ', e.response.data)
     }
 
     return null;
