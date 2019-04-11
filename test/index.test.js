@@ -147,6 +147,19 @@ describe('Test Reporting key_code', () => {
 });
 
 //*****************************************/
+// REPORTING Organisation Unit
+//*****************************************/
+describe('Test Reporting OU', () => {
+  it('[getReportingOu] - It should be true', async () => {
+    const ou = await cornerstone.getReportingOu();
+    //console.log(ou);
+    return expect(ou[0]).to.be.eql(ou[0]);
+  });
+
+});
+
+
+//*****************************************/
 // REST Employee Custom field
 //*****************************************/
 describe('Test REST custom fields', () => {
@@ -192,15 +205,33 @@ describe('Test REST employees', () => {
     return expect(user.userId).to.be.eql(test_rest_userId);
   }).timeout(10000);
 
-  // it('[updateEmployee] - It should be true', async () => {
-  //   //const email = 'dominique.lopez3@digitregroup.com';
-  //   const user             = await cornerstone.updateEmployeeByUserId({
-  //     id:   43,
-  //     data: {"customFields": [ { id: 137, name: 'Pack', value: 'Intégral 2019' } ]},
-  //   });
-  //   console.log(user);
-  //   return expect(user.status).to.be.eql('Success');
-  // });
+  it('[updateEmployee] - It should be true', async () => {
+    const user = await cornerstone.updateEmployeeByUserId({
+      id:   43,
+      data: {"customFields": [{id: 137, name: 'Pack', value: 'Intégral 2019'}]},
+    });
+    console.log(user);
+    return expect(user.status).to.be.eql('Success');
+  });
+
+  it('[createEmployee] - It should be true', async () => {
+    const user = await cornerstone.createEmployee({
+      lastname:  'JEAN',
+      firstname: 'Pierre',
+      userName:  'DIGIT_10',
+      "ous":     [
+        {
+          id:   96,
+          ouId: 'DIGIT',
+          name: 'Digit RE Group',
+          type: 'Business Unit'
+        },
+        {id: 102, ouId: 'FICE', name: 'Fice', type: 'Site'}
+      ]
+    });
+    console.log(user);
+    return expect(user.status).to.be.eql('Success');
+  }).timeout(10000);
 
 });
 
@@ -261,7 +292,7 @@ describe('Test REST enroll LO', () => {
   it('[getEnrollStatus] - It should be true', async () => {
     const enrollStatus = await cornerstone.getEnrollStatus({
       fromDate: '2019-03-19',
-      toDate: '2019-03-20'
+      toDate:   '2019-03-20'
     });
     console.log(enrollStatus);
 
