@@ -71,20 +71,20 @@ describe('Test Reporting user', () => {
     const user = await cornerstone.getReportingUserByEmail({
       email: test_reporting_user_email,
     });
-    console.log(user);
-    return expect(user.user_id).to.be.eql(test_reporting_user_id);
+    console.log(user[0].user_id);
+    return expect(user[0].user_id).to.be.eql(test_reporting_user_id);
   });
 
   it('[getReportingByUserId] - It should be true', async () => {
     const user = await cornerstone.getReportingByUserId({user_id: test_reporting_user_id});
     console.log(user);
-    return expect(user.user_id).to.be.eql(test_reporting_user_id);
+    return expect(user[0].user_id).to.be.eql(test_reporting_user_id);
   });
 
   it('[getReportingByUserRef] - It should be true', async () => {
     const user = await cornerstone.getReportingByUserRef({user_ref: test_reporting_user_ref});
     console.log(user);
-    return expect(user.user_id).to.be.eql(test_reporting_user_id);
+    return expect(user[0].user_id).to.be.eql(test_reporting_user_id);
   });
 });
 
@@ -95,7 +95,7 @@ describe('Test Reporting training', () => {
   it('[getReportingTraining] - It should be true', async () => {
     const trainings = await cornerstone.getReportingTraining({dateStart: '2019-04-01'});
     //console.log(trainings);
-    return expect(trainings.lo_type).to.be.eql('Session');
+    return expect(trainings[0].lo_type).to.be.eql('Session');
   });
 });
 
@@ -105,11 +105,27 @@ describe('Test Reporting training', () => {
 describe('Test Reporting transcript', () => {
   it('[getReportingTranscriptByObjectId] - It should be true', async () => {
     const transcript = await cornerstone.getReportingTranscriptByObjectId({objectId: '944034f8-e6d3-4227-8f42-c11e9b729a08'});
-    //console.log(transcript);
-    return expect(transcript.user_lo_status_id).to.be.eql(2048);
+    console.log(transcript);
+    return expect(transcript[0].user_lo_status_id).to.be.eql(2048);
   });
 });
 
+//*****************************************/
+// REPORTING Custom fields
+//*****************************************/
+describe('Test Reporting Custom fields dropdown values', () => {
+  it('[getReportingCustomfields] - It should be true', async () => {
+    const customFields = await cornerstone.getReportingCustomfields();
+    console.log(customFields);
+    return expect(customFields[0].culture_id).to.be.eql(33);
+  });
+
+  it('[getReportingCustomfieldsById] - It should be true', async () => {
+    const customFields = await cornerstone.getReportingCustomfieldsById({id: 137});
+    console.log(customFields);
+    return expect(customFields[0].culture_id).to.be.eql(33);
+  });
+});
 
 
 //*****************************************/
@@ -119,15 +135,64 @@ describe('Test Reporting key_code', () => {
   it('[getReportingKeycodeByUserId] - It should be true', async () => {
     const keycode = await cornerstone.getReportingKeycodeByUserId({user_id: test_reporting_user_id});
     console.log(keycode);
-    return expect(keycode.tu_training_unit_key_code).to.be.eql(test_reporting_user_ref);
+    return expect(keycode[0].tu_training_unit_key_code).to.be.eql(test_reporting_user_ref);
   });
 
   it('[getReportingKeycodeByUserRef] - It should be true', async () => {
     const keycode = await cornerstone.getReportingKeycodeByUserRef({user_ref: test_reporting_user_ref});
     console.log(keycode);
 
-    return expect(keycode.tu_training_unit_key_code).to.be.eql(test_reporting_user_ref);
+    return expect(keycode[0].tu_training_unit_key_code).to.be.eql(test_reporting_user_ref);
   });
+});
+
+//*****************************************/
+// REPORTING Organisation Unit
+//*****************************************/
+describe('Test Reporting OU', () => {
+  it('[getReportingOu] - It should be true', async () => {
+    const ou = await cornerstone.getReportingOu();
+    //console.log(ou);
+    return expect(ou[0]).to.be.eql(ou[0]);
+  });
+
+});
+
+
+//*****************************************/
+// REST Employee Custom field
+//*****************************************/
+describe('Test REST custom fields', () => {
+  it('[getEmployeesCustomFields] - It should be true', async () => {
+    const customFields = await cornerstone.getEmployeesCustomFields({pagenumber: 1});
+    console.log(customFields);
+    return expect(customFields.size).to.be.eql(50);
+  }).timeout(10000);
+
+  it('[getEmployeesCustomFieldsByUserId] - It should be true', async () => {
+    const customFields = await cornerstone.getEmployeesCustomFieldsByUserId({user_id: test_rest_userId});
+    console.log(customFields);
+    return expect(customFields.userId).to.be.eql(test_rest_userId);
+  }).timeout(10000);
+
+});
+
+//*****************************************/
+// REST Employee Groups
+//*****************************************/
+describe('Test REST groups', () => {
+  it('[getEmployeesGroups] - It should be true', async () => {
+    const customFields = await cornerstone.getEmployeesGroups({pagenumber: 1});
+    console.log(customFields);
+    return expect(customFields.size).to.be.eql(50);
+  }).timeout(10000);
+
+  it('[getEmployeesGroupsByUserId] - It should be true', async () => {
+    const customFields = await cornerstone.getEmployeesGroupsByUserId({user_id: test_rest_userId});
+    console.log(customFields);
+    return expect(customFields.userId).to.be.eql(test_rest_userId);
+  }).timeout(10000);
+
 });
 
 //*****************************************/
@@ -135,21 +200,38 @@ describe('Test Reporting key_code', () => {
 //*****************************************/
 describe('Test REST employees', () => {
   it('[getEmployeeByuserId] - It should be true', async () => {
-    const user = await cornerstone.getEmployeeByUserId({userId: test_rest_userId});
+    const user = await cornerstone.getEmployeeByUserId({userId: "dladmin"});
     console.log(user);
     return expect(user.userId).to.be.eql(test_rest_userId);
   }).timeout(10000);
 
-  // it('[updateEmployee] - It should be true', async () => {
-  //   const email = 'dominique.lopez3@digitregroup.com';
-  //   const user             = await cornerstone.updateEmployeeByUserId({
-  //     id:   4755,
-  //     //data: {"primaryEmail": email}
-  //     data: {"userId": 'FICE6'}
-  //   });
-  //   console.log(user);
-  //   return expect(user.status).to.be.eql('Success');
-  // });
+  it('[updateEmployee] - It should be true', async () => {
+    const user = await cornerstone.updateEmployeeByUserId({
+      id:   43,
+      data: {"customFields": [{id: 137, name: 'Pack', value: 'Intégral 2019'}]},
+    });
+    console.log(user);
+    return expect(user.status).to.be.eql('Success');
+  });
+
+  it('[createEmployee] - It should be true', async () => {
+    const user = await cornerstone.createEmployee({
+      lastname:  'JEAN',
+      firstname: 'Pierre',
+      userName:  'DIGIT_10',
+      "ous":     [
+        {
+          id:   96,
+          ouId: 'DIGIT',
+          name: 'Digit RE Group',
+          type: 'Business Unit'
+        },
+        {id: 102, ouId: 'FICE', name: 'Fice', type: 'Site'}
+      ]
+    });
+    console.log(user);
+    return expect(user.status).to.be.eql('Success');
+  }).timeout(10000);
 
 });
 
@@ -210,7 +292,7 @@ describe('Test REST enroll LO', () => {
   it('[getEnrollStatus] - It should be true', async () => {
     const enrollStatus = await cornerstone.getEnrollStatus({
       fromDate: '2019-03-19',
-      toDate: '2019-03-20'
+      toDate:   '2019-03-20'
     });
     console.log(enrollStatus);
 

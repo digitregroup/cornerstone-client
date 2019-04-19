@@ -84,7 +84,7 @@ class Cornerstone {
       const response = await connectionSession.get(path);
       if (response.status === 200 || response.status === 201) {
         console.log('[getReporting] - response: ', response.data);
-        return response.data.value[0];
+        return response.data.value;
       }
     } catch (e) {
       console.log('[getReporting] - Error:', e.response.data);
@@ -93,7 +93,7 @@ class Cornerstone {
   }
 
   /**
-   * Get all user data reporting with email
+   * REPORTING - Get all user data reporting with email
    * Return see src/models/wp_rpt_user.json
    * @param {string} email
    * @returns {Promise<*>}
@@ -107,7 +107,7 @@ class Cornerstone {
   }
 
   /**
-   * Get all user data reporting by user_id
+   * REPORTING - Get all user data reporting by user_id
    * Return see src/models/wp_rpt_user.json
    * @param {int} user_id
    * @returns {Promise<*>}
@@ -121,7 +121,7 @@ class Cornerstone {
   }
 
   /**
-   * Get all user data reporting by user_ref
+   * REPORTING - Get all user data reporting by user_ref
    * Return see src/models/wp_rpt_user.json
    * @param {string} user_ref
    * @returns {Promise<*>}
@@ -135,7 +135,22 @@ class Cornerstone {
   }
 
   /**
-   * Main view to get training unit key code data with user_id
+   * REPORTING - make custom request
+   * @param {string} path
+   * @param {string} query
+   * @returns {Promise<*>}
+   */
+  async getCustomReporting({path, query}) {
+
+    return await this.getReporting({
+      request: query,
+      url:     config.CORNERSTONE_PATH + path
+    });
+  }
+
+
+  /**
+   * REPORTING - Main view to get training unit key code data with user_id
    * Return see src/models/vw_rpt_training_unit_key_code.json
    * @param {int} user_id
    * @returns {Promise<*>}
@@ -149,7 +164,19 @@ class Cornerstone {
   }
 
   /**
-   * Main view to get training unit key code data with user_iduser_ref
+   * REPORTING - Organizational Unit (OU) data
+   * @returns {Promise<*>}
+   */
+  async getReportingOu() {
+
+    return await this.getReporting({
+      request: "",
+      url:     config.CORNERSTONE_REPORTING_OU
+    });
+  }
+
+  /**
+   * REPORTING - Main view to get training unit key code data with user_iduser_ref
    * Return see src/models/vw_rpt_training_unit_key_code.json
    * @param {string} user_ref
    * @returns {Promise<*>}
@@ -163,7 +190,7 @@ class Cornerstone {
   }
 
   /**
-   * Main view to get training data by date start
+   * REPORTING - Main view to get training data by date start
    * Return see src/models/vw_rpt_training.json
    * @param {string} dateStart YYYY-MM-DD
    * @returns {Promise<*>}
@@ -177,7 +204,7 @@ class Cornerstone {
   }
 
   /**
-   * Main view to get all user transcript related data
+   * REPORTING - Main view to get all user transcript related data
    * Return see src/models/vw_rpt_transcript.json
    * @param {string} dateStart YYYY-MM-DD
    * @returns {Promise<*>}
@@ -187,6 +214,33 @@ class Cornerstone {
     return await this.getReporting({
       request: `?$filter=transc_object_id eq ${objectId}`,
       url:     config.CORNERSTONE_REPORTING_TRANSCRIPT
+    });
+  }
+
+  /**
+   * REPORTING - Main view to get custom field dropdow values by id custom field
+   * Return see src/models/vw_rpt_transcript.json
+   * @param {int} custom field id, ex : Pack = 137
+   * @returns {Promise<*>}
+   */
+  async getReportingCustomfieldsById({id}) {
+
+    return await this.getReporting({
+      request: `?$filter=cfvl_field_id eq ${id} and culture_id eq 33`,
+      url:     config.CORNERSTONE_REPORTING_CUSTOM_FIELDS
+    });
+  }
+
+  /**
+   * REPORTING - Main view to get all custom fields dropdow value
+   * Return see src/models/vw_rpt_transcript.json
+   * @returns {Promise<*>}
+   */
+  async getReportingCustomfields() {
+
+    return await this.getReporting({
+      request: `?$filter=culture_id eq 33`,
+      url:     config.CORNERSTONE_REPORTING_CUSTOM_FIELDS
     });
   }
 
@@ -231,7 +285,77 @@ class Cornerstone {
   }
 
   /**
-   * This end point will update core employee record
+   * REST - This service returns custom fields data for employees.
+   * @param {int} pagenumber
+   * @returns {Promise<*>}
+   */
+  async getEmployeesCustomFields({pagenumber}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_CUSTOM_FIELDS + '?pagenumber=' + pagenumber;
+    console.log('[getEmployeesCustomFields] - path: ', path);
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_CUSTOM_FIELDS,
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
+   * REST - This service returns custom fields data by user_id employees.
+   * @param {string} user_id
+   * @returns {Promise<*>}
+   */
+  async getEmployeesCustomFieldsByUserId({user_id}) {
+    this.setAuth();
+
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_CUSTOM_FIELDS_BY_USER.replace('{user_id}', user_id);
+    console.log('[getEmployeesCustomFieldsByUserId] - path: ', path);
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_CUSTOM_FIELDS_BY_USER.replace('{user_id}', user_id),
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
+   * REST - This API returns employees and the groups in their employee profile.
+   * @param {int} pagenumber
+   * @returns {Promise<*>}
+   */
+  async getEmployeesGroups({pagenumber}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_GROUPS + '?pagenumber=' + pagenumber;
+    console.log('[getEmployeesGroups] - path: ', path);
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_GROUPS,
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
+   * REST - This API returns employees and the groups  by user_id employees.
+   * @param {string} user_id
+   * @returns {Promise<*>}
+   */
+  async getEmployeesGroupsByUserId({user_id}) {
+    this.setAuth();
+
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_GROUPS_BY_USER.replace('{user_id}', user_id);
+    console.log('[getEmployeesGroupsByUserId] - path: ', path);
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_GROUPS_BY_USER.replace('{user_id}', user_id),
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
+   * REST - This end point will update core employee record
    * @param {int} id User id, Cornerstone Internal Integer Id
    * @param {object} data See src/models/employee.json
    * @returns {Promise<*>}
@@ -262,7 +386,40 @@ class Cornerstone {
   }
 
   /**
-   * Create Training Unit Assignment
+   * REST - This end point will create employee record
+   * @param {string} userName
+   * @param {string} firstname
+   * @param {string} lastname
+   * @param {object} OU site and BU
+   * @returns {Promise<null|*>}
+   */
+  async createEmployee({userName, firstname, lastname, ous}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEE;
+    console.log('[createEmployee] - path: ', path);
+
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_EMPLOYEE,
+      method:  'POST'
+    });
+    console.log('[createEmployee] - data to create employee: ', userName, firstname, lastname, ous);
+
+    try {
+      const userObject = await connectionSession.post(path, {userName: userName, firstname: firstname, lastname: lastname, ous: ous});
+      if (userObject.status === 200) {
+        return userObject.data;
+      } else {
+        console.log('[createEmployee] - Error: ', JSON.stringify(connectionSession));
+      }
+    } catch (e) {
+      console.log('[createEmployee] - Error: ', e.response.data)
+    }
+
+    return null;
+  }
+
+  /**
+   * REST - Create Training Unit Assignment
    * @param assignmentTitle {string} String content
    * @param amount {int}
    * @param expirationDate {date} "YYYY-MM-DD"
@@ -337,7 +494,7 @@ class Cornerstone {
   }
 
   /**
-   * The purpose of the Catalog Search web service is to search & retrieve training data
+   * REST - The purpose of the Catalog Search web service is to search & retrieve training data
    * Return all catalog
    * @returns {Promise<*>}
    */
@@ -355,7 +512,7 @@ class Cornerstone {
   }
 
   /**
-   * The Get Details operation allows the ability for an active user to drill down and obtain
+   * REST - The Get Details operation allows the ability for an active user to drill down and obtain
    * a learning object’s (LO’s) standard and custom field data.
    * {ObjectId} The Cornerstone generated Learning Object ID (LO ID).
    * @returns {Promise<*>}
@@ -374,7 +531,7 @@ class Cornerstone {
   }
 
   /**
-   * The Transcript Search web service gives you the ability to retrieve users’ transcript information
+   * REST - The Transcript Search web service gives you the ability to retrieve users’ transcript information
    * from the Cornerstone Learning Management System (LMS).
    * {LOID} Learning Object (LO) Type that need to be retrieved.
    * @returns {Promise<*>}
@@ -393,7 +550,7 @@ class Cornerstone {
   }
 
   /**
-   * Enrolls users to a Learning Object (LO)
+   * REST - Enrolls users to a Learning Object (LO)
    * @param {LOID} Learning Object (LO)
    * @returns {Promise<*>}
    */
@@ -451,7 +608,7 @@ class Cornerstone {
   }
 
   /**
-   * The Proxy Enrollment Status web service gets proxy enrollment statuses based on a given date range.
+   * REST - The Proxy Enrollment Status web service gets proxy enrollment statuses based on a given date range.
    * @param {string} fromDate YYYY-MM-DD
    * @param {string} toDate YYYY-MM-DD
    * @returns {Promise<*>}

@@ -123,3 +123,4 @@ node_modules/
 test/tests\.test\.js
 
 tmp/session\.json
+tmp/request\.json
