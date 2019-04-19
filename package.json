@@ -6,7 +6,7 @@
     "console-stamp": "^0.2.7"
   },
   "description": "Client for Cornerstone api",
-  "main": "src/conerstone.js",
+  "main": "src/cornerstone.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
