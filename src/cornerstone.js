@@ -84,7 +84,7 @@ class Cornerstone {
       const response = await connectionSession.get(path);
       if (response.status === 200 || response.status === 201) {
         console.log('[getReporting] - response: ', response.data);
-        return response.data.value[0];
+        return response.data.value;
       }
     } catch (e) {
       console.log('[getReporting] - Error:', e.response.data);
@@ -135,6 +135,21 @@ class Cornerstone {
   }
 
   /**
+   * REPORTING - make custom request
+   * @param {string} path
+   * @param {string} query
+   * @returns {Promise<*>}
+   */
+  async getCustomReporting({path, query}) {
+
+    return await this.getReporting({
+      request: query,
+      url:     config.CORNERSTONE_PATH + path
+    });
+  }
+
+
+  /**
    * REPORTING - Main view to get training unit key code data with user_id
    * Return see src/models/vw_rpt_training_unit_key_code.json
    * @param {int} user_id
@@ -145,6 +160,18 @@ class Cornerstone {
     return await this.getReporting({
       request: "?$filter=tu_contact_user_id eq {user_id}".replace('{user_id}', user_id),
       url:     config.CORNERSTONE_REPORTING_KEYCODE
+    });
+  }
+
+  /**
+   * REPORTING - Organizational Unit (OU) data
+   * @returns {Promise<*>}
+   */
+  async getReportingOu() {
+
+    return await this.getReporting({
+      request: "",
+      url:     config.CORNERSTONE_REPORTING_OU
     });
   }
 
@@ -187,6 +214,33 @@ class Cornerstone {
     return await this.getReporting({
       request: `?$filter=transc_object_id eq ${objectId}`,
       url:     config.CORNERSTONE_REPORTING_TRANSCRIPT
+    });
+  }
+
+  /**
+   * REPORTING - Main view to get custom field dropdow values by id custom field
+   * Return see src/models/vw_rpt_transcript.json
+   * @param {int} custom field id, ex : Pack = 137
+   * @returns {Promise<*>}
+   */
+  async getReportingCustomfieldsById({id}) {
+
+    return await this.getReporting({
+      request: `?$filter=cfvl_field_id eq ${id} and culture_id eq 33`,
+      url:     config.CORNERSTONE_REPORTING_CUSTOM_FIELDS
+    });
+  }
+
+  /**
+   * REPORTING - Main view to get all custom fields dropdow value
+   * Return see src/models/vw_rpt_transcript.json
+   * @returns {Promise<*>}
+   */
+  async getReportingCustomfields() {
+
+    return await this.getReporting({
+      request: `?$filter=culture_id eq 33`,
+      url:     config.CORNERSTONE_REPORTING_CUSTOM_FIELDS
     });
   }
 
@@ -326,6 +380,39 @@ class Cornerstone {
       }
     } catch (e) {
       console.log('[getEmployeeByUserId] - Error: ', e.response.data)
+    }
+
+    return null;
+  }
+
+  /**
+   * REST - This end point will create employee record
+   * @param {string} userName
+   * @param {string} firstname
+   * @param {string} lastname
+   * @param {object} OU site and BU
+   * @returns {Promise<null|*>}
+   */
+  async createEmployee({userName, firstname, lastname, ous}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEE;
+    console.log('[createEmployee] - path: ', path);
+
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_EMPLOYEE,
+      method:  'POST'
+    });
+    console.log('[createEmployee] - data to create employee: ', userName, firstname, lastname, ous);
+
+    try {
+      const userObject = await connectionSession.post(path, {userName: userName, firstname: firstname, lastname: lastname, ous: ous});
+      if (userObject.status === 200) {
+        return userObject.data;
+      } else {
+        console.log('[createEmployee] - Error: ', JSON.stringify(connectionSession));
+      }
+    } catch (e) {
+      console.log('[createEmployee] - Error: ', e.response.data)
     }
 
     return null;
