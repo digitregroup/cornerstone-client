@@ -135,6 +135,21 @@ class Cornerstone {
   }
 
   /**
+   * REPORTING - make custom request
+   * @param {string} path
+   * @param {string} query
+   * @returns {Promise<*>}
+   */
+  async getCustomReporting({path, query}) {
+
+    return await this.getReporting({
+      request: query,
+      url:     config.CORNERSTONE_PATH + path
+    });
+  }
+
+
+  /**
    * REPORTING - Main view to get training unit key code data with user_id
    * Return see src/models/vw_rpt_training_unit_key_code.json
    * @param {int} user_id
