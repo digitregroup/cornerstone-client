@@ -9,6 +9,7 @@ It's an api client to request Cornerstone REST Services and Reporting Services.
 ## Reporting API
 The Reporting API is a public facing web service that allows clients programmatic read-only access to their Cornerstone data via the Realtime Data Warehouse. It adheres to the OData protocol (http://www.odata.org/)
  * [Reporting API Starter Guide_v1.4](documentation/ReportingAPIStarterGuide_v1.4.pdf)
+ * [Api documentation](documentation/api_doc.pdf)
 
 ### How to use
 ```
@@ -73,3 +74,13 @@ const user = await cornerstone.updateEmployeeByUserId({
 
 const user = await cornerstone.getEmployeeByUserId({userId: rest_userId});
 ```
+
+### Set Active or inactive
+```javascript
+const user = await cornerstone.updateEmployeeByUserId({
+    id:   2328,
+    data : {"workerStatus":{active: true}}
+});
+```
+active = user_status_id = 1
+inActive = user_status_id = 2
