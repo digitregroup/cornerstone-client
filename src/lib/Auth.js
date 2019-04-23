@@ -146,7 +146,7 @@ class Auth {
           alias:     response.data.data[0].Alias,
           expiresOn: response.data.data[0].ExpiresOn
         };
-        await fs.writeFile('../../tmp/session.json', JSON.stringify(session), 'utf8', (e) => {
+        await fs.writeFile(config.TMP_PATH + 'session.json', JSON.stringify(session), 'utf8', (e) => {
           if (e) {
             console.log('[setSession] - Error save session file', e);
           } else {
