@@ -7,6 +7,7 @@ module.exports = () => {
     "CORNERSTONE_PATH_SESSION":                       "/services/api/sts/session",
     "CORNERSTONE_PATH":                               "/services/api/x/odata/api/views/",
     "CORNERSTONE_REPORTING_USER":                     "/services/api/x/odata/api/views/vw_rpt_user",                    // Main view to getRestApi all user data
+    "CORNERSTONE_REPORTING_USER_BASE":                "/services/api/x/odata/api/views/vw_rpt_user_base",               // Main view to user data
     "CORNERSTONE_REPORTING_KEYCODE":                  "/services/api/x/odata/api/views/vw_rpt_training_unit_key_code",  // Main view to getRestApi training unit key code data
     "CORNERSTONE_REPORTING_TRAINING":                 "/services/api/x/odata/api/views/vw_rpt_training",                // Main view to get training data
     "CORNERSTONE_REPORTING_TRANSCRIPT":               "/services/api/x/odata/api/views/vw_rpt_transcript",              // Main view to get all user transcript related data

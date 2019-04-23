@@ -1,6 +1,6 @@
 {
   "name": "@digitregroup/cornerstone-client",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "dependencies": {
     "axios": "^0.18.0",
     "console-stamp": "^0.2.7"

@@ -135,6 +135,18 @@ class Cornerstone {
   }
 
   /**
+   * REPORTING - Get all active users
+   * @returns {Promise<*>}
+   */
+  async getAllActiveUsers() {
+
+    return await this.getReporting({
+      request: "?$filter=user_status_id eq 1&$select=user_id, user_email",
+      url:     config.CORNERSTONE_REPORTING_USER_BASE
+    });
+  }
+
+  /**
    * REPORTING - make custom request
    * @param {string} path
    * @param {string} query
