@@ -91,7 +91,8 @@ class Auth {
       headers: {
         'x-csod-date':          dateUTC,
         'x-csod-session-token': token,
-        'x-csod-signature':     signature
+        'x-csod-signature':     signature,
+        'prefer':               "odata.maxpagesize=" + config.MAXPAGESIZE
       }
     });
   }

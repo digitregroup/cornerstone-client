@@ -355,6 +355,72 @@ class Cornerstone {
   }
 
   /**
+   * REST - This API returns User type and Employee Status details for employee records
+   * @returns {Promise<*>}
+   */
+  async getEmployeesStatus() {
+    this.setAuth();
+
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEES_STATUS;
+    console.log('[getEmployeesStatus] - path: ', path);
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_EMPLOYEES_STATUS,
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
+   * REST - Employment Status GET/PUT also supports different identifier types
+   * @param {string} user_id
+   * @returns {Promise<*>}
+   */
+  async getEmployeeEmploymentStatus({id}) {
+    this.setAuth();
+
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYMENT_STATUS.replace('{id}', id);
+    console.log('[getEmployeeEmploymentStatus] - path: ', path);
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_EMPLOYMENT_STATUS.replace('{id}', id),
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
+   * REST - Employment Status GET/PUT also supports different identifier types
+   * @param {int} id User id, Cornerstone Internal Integer Id
+   * @param {object}
+   * @returns {Promise<*>}
+   */
+  async updateEmployeeEmploymentStatus({id, data}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYMENT_STATUS.replace('{id}', id);
+    console.log('[updateEmployeeEmploymentStatus] - path: ', path);
+
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_EMPLOYMENT_STATUS.replace('{id}', id),
+      method:  'PUT'
+    });
+    console.log('[updateEmployeeEmploymentStatus] - data employee to update: ', data);
+
+    try {
+      const userObject = await connectionSession.patch(path, data);
+      if (userObject.status === 200) {
+        return userObject.data;
+      } else {
+        console.log('[updateEmployeeEmploymentStatus] - Error: ', JSON.stringify(connectionSession));
+      }
+    } catch (e) {
+      console.log('[updateEmployeeEmploymentStatus] - Error: ', e.response.data)
+    }
+
+    return null;
+  }
+
+  /**
    * REST - This end point will update core employee record
    * @param {int} id User id, Cornerstone Internal Integer Id
    * @param {object} data See src/models/employee.json
@@ -376,10 +442,10 @@ class Cornerstone {
       if (userObject.status === 200) {
         return userObject.data;
       } else {
-        console.log('[getEmployeeByUserId] - Error: ', JSON.stringify(connectionSession));
+        console.log('[updateEmployeeByUserId] - Error: ', JSON.stringify(connectionSession));
       }
     } catch (e) {
-      console.log('[getEmployeeByUserId] - Error: ', e.response.data)
+      console.log('[updateEmployeeByUserId] - Error: ', e.response.data)
     }
 
     return null;
