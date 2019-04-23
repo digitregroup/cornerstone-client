@@ -1,7 +1,7 @@
 require('console-stamp')(console, 'HH:MM:ss.l');
 module.exports = () => {
   return {
-    "TMP_PATH":                                       "tmp/",
+    "TMP_PATH":                                       "../../tmp/",
     "CORNERSTONE_BASE_URL":                           "https://{corpname}.csod.com",
     "CORNERSTONE_PATH_SESSION":                       "/services/api/sts/session",
     "CORNERSTONE_PATH":                               "/services/api/x/odata/api/views/",
