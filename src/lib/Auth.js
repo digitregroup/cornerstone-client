@@ -146,6 +146,11 @@ class Auth {
           alias:     response.data.data[0].Alias,
           expiresOn: response.data.data[0].ExpiresOn
         };
+
+        if (!fs.existsSync(config.TMP_PATH)){
+          fs.mkdirSync(config.TMP_PATH);
+        }
+
         await fs.writeFile(config.TMP_PATH + 'session.json', JSON.stringify(session), 'utf8', (e) => {
           if (e) {
             console.log('[setSession] - Error save session file', e);
@@ -176,6 +181,7 @@ class Auth {
    */
   readSession() {
     let file;
+
     if (fs.existsSync(config.TMP_PATH + 'session.json')) {
       file = fs.readFileSync(config.TMP_PATH + 'session.json', 'utf8');
       console.log('[readSession] - session tmp file: ', file);
