@@ -1,19 +1,50 @@
-const crypto = require('crypto');
-const axios  = require('axios');
-const fs     = require('fs');
-const config = require('../../config/common')();
+const crypto    = require('crypto');
+const axios     = require('axios');
+const fs        = require('fs');
+const dynamoose = require('dynamoose');
+const config    = require('../../config/common')();
 
 /**
  * Set authentification and session for request to Cornerstone api
  */
 class Auth {
 
-  constructor({apiId, apiSecret, username, alias, corpname}) {
-    this.apiId     = apiId;
-    this.apiSecret = apiSecret;
-    this.username  = username;
-    this.alias     = alias;
-    this.corpname  = corpname;
+  constructor({apiId, apiSecret, username, alias, corpname, region = null, dynamodbName = null}) {
+    this.apiId        = apiId;
+    this.apiSecret    = apiSecret;
+    this.username     = username;
+    this.alias        = alias;
+    this.corpname     = corpname;
+    this.region       = region;
+    this.dynamodbName = dynamodbName;
+    this.tokenModel   = null;
+  }
+
+
+  /**
+   * Set dynamoose model if region and dynamodb name are set
+   * @returns {null|*}
+   */
+  async setTokenModel() {
+    if (this.tokenModel !== null) {
+      return this.tokenModel;
+    }
+
+    if (!this.region || !this.dynamodbName) {
+      console.log('There are empty region or dynamo name');
+      return null;
+    }
+
+    dynamoose.AWS.config.update({
+      region: this.region,
+    });
+
+    this.tokenModel = dynamoose.model(this.dynamodbName, {
+      session:     String,
+      sessionInfo: String
+    });
+
+    return this.tokenModel;
   }
 
   /**
@@ -103,7 +134,19 @@ class Auth {
    * @returns {Promise<{alias: *, expiresOn: *, secret: *, status: number | string, token: *}>}
    */
   async setSession({dateUTC}) {
-    const sessionFile = await JSON.parse(this.readSession());
+    let sessionFile  = null;
+    const tokenModel = await this.setTokenModel();
+
+    if (!this.tokenModel) {
+      console.log('readFile');
+      sessionFile = await JSON.parse(this.readSession());
+    } else {
+      console.log('readBdd');
+      sessionFile = await tokenModel.get('cornerstone').then((item) => JSON.parse(item.sessionInfo));
+    }
+
+    console.log('session', sessionFile);
+
     if (sessionFile) {
       const dateNow     = new Date();
       const dateSession = new Date(sessionFile.expiresOn);
@@ -113,7 +156,7 @@ class Auth {
       }
     }
 
-    const httpUrl  = config.CORNERSTONE_PATH_SESSION;
+    const httpUrl = config.CORNERSTONE_PATH_SESSION;
 
     const signature = this.getSignature({
       apiId:     this.apiId,
@@ -148,17 +191,7 @@ class Auth {
           expiresOn: response.data.data[0].ExpiresOn
         };
 
-        if (!fs.existsSync(config.TMP_PATH)){
-          fs.mkdirSync(config.TMP_PATH);
-        }
-
-        await fs.writeFile(config.TMP_PATH + 'session.json', JSON.stringify(session), 'utf8', (e) => {
-          if (e) {
-            console.log('[setSession] - Error save session file', e);
-          } else {
-            console.log('[setSession] - Session saved in tmp file');
-          }
-        });
+        await this.saveSession({sessionInfo: session, tokenModel: this.tokenModel});
 
         return session;
       }
@@ -174,6 +207,30 @@ class Auth {
    */
   getBaseUrl({corpname}) {
     return config.CORNERSTONE_BASE_URL.replace('{corpname}', corpname);
+  }
+
+  async saveSession({sessionInfo, tokenModel}) {
+
+    if (!tokenModel) {
+      if (!fs.existsSync(config.TMP_PATH)) {
+        fs.mkdirSync(config.TMP_PATH);
+      }
+
+      await fs.writeFile(config.TMP_PATH + 'session.json', JSON.stringify(sessionInfo), 'utf8', (e) => {
+        if (e) {
+          console.log('[setSession] - Error save session file', e);
+        } else {
+          console.log('[setSession] - Session saved in tmp file');
+        }
+      });
+    } else {
+      const token = new tokenModel({
+        session:     'cornerstone',
+        sessionInfo: JSON.stringify(sessionInfo)
+      });
+      await token.save();
+      console.log('Session save in dynamoDb');
+    }
   }
 
   /**

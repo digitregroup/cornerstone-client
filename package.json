@@ -3,7 +3,8 @@
   "version": "0.0.46",
   "dependencies": {
     "axios": "^0.18.0",
-    "console-stamp": "^0.2.7"
+    "console-stamp": "^0.2.7",
+    "dynamoose": "^1.7.2"
   },
   "description": "Client for Cornerstone api",
   "main": "src/cornerstone.js",
