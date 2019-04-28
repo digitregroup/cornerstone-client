@@ -142,7 +142,14 @@ class Auth {
       sessionFile = await JSON.parse(this.readSession());
     } else {
       console.log('readBdd');
-      sessionFile = await tokenModel.get('cornerstone').then((item) => JSON.parse(item.sessionInfo));
+      try {
+        sessionFile = await tokenModel.get('cornerstone').then((item) => {
+          console.log('read dynamodb item:', item)
+          return JSON.parse(item.sessionInfo)
+        });
+      } catch (error) {
+        console.log('Error read dynamodb:', error);
+      }
     }
 
     console.log('session', sessionFile);
