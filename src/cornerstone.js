@@ -4,14 +4,16 @@ const Auth   = require('./lib/Auth');
 
 class Cornerstone {
 
-  constructor({apiId, apiSecret, username, alias, corpname}) {
-    this.apiId     = apiId;
-    this.apiSecret = apiSecret;
-    this.username  = username;
-    this.alias     = alias;
-    this.corpname  = corpname;
-    this.dateTime  = this.getDatetimeUTC();
-    this.auth      = null;
+  constructor({apiId, apiSecret, username, alias, corpname, region = null, dynamodbName = null}) {
+    this.apiId        = apiId;
+    this.apiSecret    = apiSecret;
+    this.username     = username;
+    this.alias        = alias;
+    this.corpname     = corpname;
+    this.dateTime     = this.getDatetimeUTC();
+    this.auth         = null;
+    this.region       = region;
+    this.dynamodbName = dynamodbName;
   }
 
   /**
@@ -24,11 +26,13 @@ class Cornerstone {
     }
 
     this.auth = new Auth({
-      apiId:     this.apiId,
-      apiSecret: this.apiSecret,
-      username:  this.username,
-      alias:     this.alias,
-      corpname:  this.corpname
+      apiId:        this.apiId,
+      apiSecret:    this.apiSecret,
+      username:     this.username,
+      alias:        this.alias,
+      corpname:     this.corpname,
+      region:       this.region,
+      dynamodbName: this.dynamodbName
     });
 
     return this.auth;
@@ -483,7 +487,12 @@ class Cornerstone {
     console.log('[createEmployee] - data to create employee: ', userName, firstname, lastname, ous);
 
     try {
-      const userObject = await connectionSession.post(path, {userName: userName, firstname: firstname, lastname: lastname, ous: ous});
+      const userObject = await connectionSession.post(path, {
+        userName:  userName,
+        firstname: firstname,
+        lastname:  lastname,
+        ous:       ous
+      });
       if (userObject.status === 200) {
         return userObject.data;
       } else {
