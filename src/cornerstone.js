@@ -301,6 +301,25 @@ class Cornerstone {
   }
 
   /**
+   * REST - Returns the core Employee record containing bulk of the information about the Employee.
+   * @param {int} id Valid id, Cornerstone Internal Integer Id
+   * @returns {Promise<*>}
+   */
+  async getEmployeeId({id}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEE + id;
+
+    console.log('[getEmployeeById] - path: ', path);
+
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_EMPLOYEE + id,
+      method:  'GET'
+    });
+
+    return this.getRestApi({connectionSession: connectionSession, path: path})
+  }
+
+  /**
    * REST - This service returns custom fields data for employees.
    * @param {int} pagenumber
    * @returns {Promise<*>}
