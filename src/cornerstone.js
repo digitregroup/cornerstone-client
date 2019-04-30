@@ -305,7 +305,7 @@ class Cornerstone {
    * @param {int} id Valid id, Cornerstone Internal Integer Id
    * @returns {Promise<*>}
    */
-  async getEmployeeId({id}) {
+  async getEmployeeById({id}) {
     this.setAuth();
     const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEE + id;
 
@@ -480,7 +480,7 @@ class Cornerstone {
         console.log('[updateEmployeeByUserId] - Error: ', JSON.stringify(connectionSession));
       }
     } catch (e) {
-      console.log('[updateEmployeeByUserId] - Error: ', e.response.data)
+      console.log('[updateEmployeeByUserId] - Error: ', JSON.stringify(e.response.data))
     }
 
     return null;
@@ -518,7 +518,7 @@ class Cornerstone {
         console.log('[createEmployee] - Error: ', JSON.stringify(connectionSession));
       }
     } catch (e) {
-      console.log('[createEmployee] - Error: ', e.response.data)
+      console.log('[createEmployee] - Error: ', JSON.stringify(e.response.data))
     }
 
     return null;
