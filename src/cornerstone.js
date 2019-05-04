@@ -672,7 +672,7 @@ class Cornerstone {
             ],
             "ProxyType":              "Standard",
             "ForceEnrollment":        false,
-            "AssignmentStatus":       "Approve",
+            "AssignmentStatus":       "Complete",
             "Availabilities":         [
               {
                 "__type":               "UserAvailability:www.CornerStoneOnDemand.com/Services",
@@ -683,7 +683,8 @@ class Cornerstone {
               }
             ],
             "EmailConfiguration":     "NoEmails",
-            "ManageSeatAvailability": "IncreaseAvailableSeats"
+            "ManageSeatAvailability": "IncreaseAvailableSeats",
+            "Comment":                "Add by api"
           }
         ]
       }
