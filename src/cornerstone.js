@@ -642,9 +642,9 @@ class Cornerstone {
    * {LOID} Learning Object (LO) Type that need to be retrieved.
    * @returns {Promise<*>}
    */
-  async getLearningObjectTranscript({LOID}) {
+  async getLearningObjectTranscript({loid}) {
     this.setAuth();
-    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_LEARNING_OBJECT_TRANSCRIPT + '?LOID=' + LOID;
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_LEARNING_OBJECT_TRANSCRIPT + '?LOID=' + loid;
     console.log('[getLearningObjectTranscript] - path: ', path);
 
     const connectionSession = await this.getConnectionSession({
@@ -657,17 +657,17 @@ class Cornerstone {
 
   /**
    * REST - Enrolls users to a Learning Object (LO)
-   * @param {LOID} Learning Object (LO)
+   * @param {string} Learning Object (LO)
    * @returns {Promise<*>}
    */
-  async postEnrollUserToAnlearningObject({LOID, userId}) {
+  async postEnrollUserToAnlearningObject({loid, userId}) {
     const data = {
       "data": {
         "record": [
           {
             "Training":               [
               {
-                "LOID": LOID
+                "LOID": loid
               }
             ],
             "ProxyType":              "Standard",
@@ -698,7 +698,7 @@ class Cornerstone {
       httpUrl: config.CORNERSTONE_SERVICE_ENROLL_LO,
       method:  'POST'
     });
-    console.log('[postEnrollUserToAnlearningObject] - data: ', data);
+    console.log('[postEnrollUserToAnlearningObject] - data: ', JSON.stringify(data));
 
     try {
       const userObject = await connectionSession.post(path, data);
@@ -717,22 +717,22 @@ class Cornerstone {
   /**
    * REST - Services for Session Roster
    * The purpose of this web service is to allow clients, in real time, to update the session attendance roster as well as complete the session.
-   * @param {LOID} Learning Object (LO)
-   * @param {userId} userId
-   * @param {ActorID} ActorID of Admin/Manager submitting the roster/updating attendance
+   * @param {String} Learning Object (LO)
+   * @param {String} userId
+   * @param {String} actorId of Admin/Manager submitting the roster/updating attendance
    * @returns {Promise<*>}
    */
-  async postSessionRoster({LOID, userId, ActorID}) {
+  async postSessionRoster({loid, userId, actorId}) {
     const data = {
       "data": {
         "record":[{
-          "SessionLOID":LOID,
+          "SessionLOID":loid,
           "Users":[{
             "UserID":userId,
             "Score":20
           }],
           "SessionStatus":"Completed",
-          "ActorID":ActorID
+          "ActorID":actorId
         }]
       }
     };
@@ -745,7 +745,7 @@ class Cornerstone {
       httpUrl: config.CORNERSTONE_SERVICE_SESSION_ROSTER,
       method:  'POST'
     });
-    console.log('[postSessionRoster] - data: ', data);
+    console.log('[postSessionRoster] - data: ', JSON.stringify(data));
 
     try {
       const userObject = await connectionSession.post(path, data);
