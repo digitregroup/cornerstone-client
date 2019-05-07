@@ -20,6 +20,7 @@ module.exports = () => {
     "CORNERSTONE_SERVICE_LEARNING_OBJECT_TRANSCRIPT": "/services/api/LOTranscript/TranscriptSearch",                    // getRestApi learning object transcript
     "CORNERSTONE_SERVICE_ENROLL_LO":                  "/services/api/ProxyEnroll/CreateProxyEnrollment",                // enrolls a user to an LO.
     "CORNERSTONE_SERVICE_ENROLL_LO_STATUS":           "/services/api/ProxyEnroll/ProxyEnrollmentStatus",                // enrolls status
+    "CORNERSTONE_SERVICE_SESSION_ROSTER":             "/services/api/SessionRoster/",                                   // session roster
     "CORNERSTONE_SERVICE_CUSTOM_FIELDS":              "/services/api/x/users/v1/employees/customfields",                // employee custom fields
     "CORNERSTONE_SERVICE_CUSTOM_FIELDS_BY_USER":      "/services/api/x/users/v1/employees/userid-{user_id}/customfields",// Custom fields by user_id
     "CORNERSTONE_SERVICE_GROUPS":                     "/services/api/x/users/v1/employees/groups",                      // employee groups
