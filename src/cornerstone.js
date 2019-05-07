@@ -732,7 +732,7 @@ class Cornerstone {
             "Score":20
           }],
           "SessionStatus":"Completed",
-          "ActorID":"DIGIT2"
+          "ActorID":ActorID
         }]
       }
     };
