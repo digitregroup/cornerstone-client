@@ -270,7 +270,7 @@ class Cornerstone {
     try {
       const response = await connectionSession.get(path);
       if (response.status === 200) {
-        return response.data.data;
+        return JSON.stringify(response.data.data);
       } else {
         console.log('[getRestApi] - Error: ', JSON.stringify(connectionSession));
       }
@@ -678,13 +678,13 @@ class Cornerstone {
                 "__type":               "UserAvailability:www.CornerStoneOnDemand.com/Services",
                 "IncludeSubs":          false,
                 "PreApproved":          true,
-                "RegisterUponApproval": false,
+                "RegisterUponApproval": true,
                 "Id":                   userId
               }
             ],
             "EmailConfiguration":     "NoEmails",
             "ManageSeatAvailability": "IncreaseAvailableSeats",
-            "Comment":                "Add by api"
+            "Comment":                "Added by api"
           }
         ]
       }
@@ -709,6 +709,53 @@ class Cornerstone {
       }
     } catch (e) {
       console.log('[postEnrollUserToAnlearningObject] - Error: ', e.response.data)
+    }
+
+    return null;
+  }
+
+  /**
+   * REST - Services for Session Roster
+   * The purpose of this web service is to allow clients, in real time, to update the session attendance roster as well as complete the session.
+   * @param {LOID} Learning Object (LO)
+   * @param {userId} userId
+   * @param {ActorID} ActorID of Admin/Manager submitting the roster/updating attendance
+   * @returns {Promise<*>}
+   */
+  async postSessionRoster({LOID, userId, ActorID}) {
+    const data = {
+      "data": {
+        "record":[{
+          "SessionLOID":LOID,
+          "Users":[{
+            "UserID":userId,
+            "Score":20
+          }],
+          "SessionStatus":"Completed",
+          "ActorID":"DIGIT2"
+        }]
+      }
+    };
+
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_SESSION_ROSTER;
+    console.log('[postSessionRoster] - path: ', path);
+
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: config.CORNERSTONE_SERVICE_SESSION_ROSTER,
+      method:  'POST'
+    });
+    console.log('[postSessionRoster] - data: ', data);
+
+    try {
+      const userObject = await connectionSession.post(path, data);
+      if (userObject.status === 200) {
+        return userObject.data;
+      } else {
+        console.log('[postSessionRoster] - Error: ', JSON.stringify(connectionSession));
+      }
+    } catch (e) {
+      console.log('[postSessionRoster] - Error: ', e.response.data)
     }
 
     return null;
