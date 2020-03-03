@@ -96,6 +96,34 @@ class Cornerstone {
     return null;
   }
 
+
+  /**
+   * Foundational APis - Main method for request Foundational APis
+   * @param {string} request
+   * @param {string} url
+   * @returns {Promise<*>}
+   */
+  async getFondational({request, url}) {
+    this.setAuth();
+    const path = this.auth.getBaseUrl({corpname: this.corpname}) + url + request;
+    console.log('[getFondational] - path: ', path);
+    const connectionSession = await this.getConnectionSession({
+      httpUrl: url,
+      method:  'GET'
+    });
+
+    try {
+      const response = await connectionSession.get(path);
+      if (response.status === 200 || response.status === 201) {
+        console.log('[getFondational] - response: ', response.data);
+        return response.data;
+      }
+    } catch (e) {
+      console.log('[getFondational] - Error:', e.response.data);
+    }
+    return null;
+  }
+
   /**
    * REPORTING - Get all user data reporting with email
    * Return see src/models/wp_rpt_user.json
@@ -161,6 +189,20 @@ class Cornerstone {
     return await this.getReporting({
       request: query,
       url:     config.CORNERSTONE_PATH + path
+    });
+  }
+
+  /**
+   * Fondational Apis - getRoster
+   * @param {string} path
+   * @param {string} query sessionLOID / sessionNumber / locator / status
+   * @returns {Promise<*>}
+   */
+  async getRoster({query}) {
+
+    return await this.getFondational({
+      request: query,
+      url:     config.CORNERSTONE_SESSION_ROSTER
     });
   }
 
@@ -275,7 +317,7 @@ class Cornerstone {
         console.log('[getRestApi] - Error: ', JSON.stringify(connectionSession));
       }
     } catch (e) {
-      console.log('[getRestApi] - Error: ', e.response.data)
+      console.log('[getRestApi] - Error: ', JSON.stringify(e.response.data))
     }
 
     return null;

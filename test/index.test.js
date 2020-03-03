@@ -129,6 +129,17 @@ describe('Test Reporting Custom fields dropdown values', () => {
 
 
 //*****************************************/
+// Fondational Apis Roster
+//*****************************************/
+describe('Test Fondational Api Roster', () => {
+  it('[getReportingTranscriptByObjectId] - It should be true', async () => {
+    const transcript = await cornerstone.getRoster({query: "?sessionLOID=FCCE9F95-AE2B-48C4-9FD9-A8D3977D5136"});
+    console.log(transcript);
+    return expect(transcript.totalRecords).to.be.eql(1);
+  });
+});
+
+//*****************************************/
 // REPORTING Keycode
 //*****************************************/
 describe('Test Reporting key_code', () => {
