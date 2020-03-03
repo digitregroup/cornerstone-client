@@ -1,10 +1,11 @@
 {
   "name": "@digitregroup/cornerstone-client",
-  "version": "0.0.58",
+  "version": "0.0.60",
   "dependencies": {
-    "axios": "^0.18.0",
-    "console-stamp": "^0.2.7",
-    "dynamoose": "^1.7.2"
+    "axios": "^0.18.1",
+    "console-stamp": "^0.2.9",
+    "dynamoose": "^1.7.2",
+    "aws-sdk": "latest"
   },
   "description": "Client for Cornerstone api",
   "main": "src/cornerstone.js",
@@ -23,6 +24,6 @@
   "homepage": "https://github.com/digitregroup/cornerstone-client#readme",
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^6.0.2"
+    "mocha": "^6.2.2"
   }
 }
