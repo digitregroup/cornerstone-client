@@ -27,5 +27,6 @@ module.exports = () => {
     "CORNERSTONE_SERVICE_GROUPS_BY_USER":             "/services/api/x/users/v1/employees/userid-{user_id}/groups",     // groups by user_id
     "CORNERSTONE_SERVICE_EMPLOYMENT_STATUS":          "/services/api/x/users/v1/employees/id-{id}/employmentstatus",     // Employment Status GET/PUT also supports different identifier types
     "CORNERSTONE_SERVICE_EMPLOYEES_STATUS":           "/services/api/x/users/v1/employees/employmentstatus",            // This API returns User type and Employee Status details for employee records
+    "CORNERSTONE_SESSION_ROSTER":                     "/services/api/SessionRoster/GetSessionRoster",                   // Get Session status
   };
 };
