@@ -11,7 +11,7 @@ const params = {
   apiSecret: '',
   username:  '',
   alias:     '',
-  corpname:  ''
+  corpname:  '',
 };
 
 const test_reporting_user_id    = 1;
