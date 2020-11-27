@@ -92,6 +92,7 @@ class Cornerstone {
       }
     } catch (e) {
       console.log('[getReporting] - Error:', e.response.data);
+      throw new Error(JSON.stringify(e));
     }
     return null;
   }
@@ -120,6 +121,7 @@ class Cornerstone {
       }
     } catch (e) {
       console.log('[getFondational] - Error:', e.response.data);
+      throw new Error(JSON.stringify(e));
     }
     return null;
   }
@@ -318,6 +320,7 @@ class Cornerstone {
       }
     } catch (e) {
       console.log('[getRestApi] - Error: ', JSON.stringify(e.response.data))
+      throw new Error(JSON.stringify(e));
     }
 
     return null;
@@ -492,6 +495,7 @@ class Cornerstone {
       }
     } catch (e) {
       console.log('[updateEmployeeEmploymentStatus] - Error: ', e.response.data)
+      throw new Error(JSON.stringify(e));
     }
 
     return null;
@@ -523,6 +527,7 @@ class Cornerstone {
       }
     } catch (e) {
       console.log('[updateEmployeeByUserId] - Error: ', JSON.stringify(e.response.data))
+      throw new Error(JSON.stringify(e));
     }
 
     return null;
@@ -561,6 +566,7 @@ class Cornerstone {
       }
     } catch (e) {
       console.log('[createEmployee] - Error: ', JSON.stringify(e.response.data))
+      throw new Error(JSON.stringify(e));
     }
 
     return null;
@@ -626,6 +632,7 @@ class Cornerstone {
       }
     } catch (e) {
       console.log('[postKeycodeUserId] - Error: ', e.response.data)
+      throw new Error(JSON.stringify(e));
     }
 
     return null;
@@ -751,6 +758,7 @@ class Cornerstone {
       }
     } catch (e) {
       console.log('[postEnrollUserToAnlearningObject] - Error: ', e.response.data)
+      throw new Error(JSON.stringify(e));
     }
 
     return null;
@@ -798,6 +806,7 @@ class Cornerstone {
       }
     } catch (e) {
       console.log('[postSessionRoster] - Error: ', e.response.data)
+      throw new Error(JSON.stringify(e));
     }
 
     return null;

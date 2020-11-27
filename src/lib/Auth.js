@@ -148,11 +148,13 @@ class Auth {
           return JSON.parse(item.sessionInfo);
         }).catch((error) => {
           console.log('Error readBdd:', error);
+          throw new Error(JSON.stringify(error));
         });
 
 
       } catch (error) {
         console.log('Error read dynamodb:', error);
+        throw new Error(JSON.stringify(error));
       }
     }
 
@@ -208,6 +210,7 @@ class Auth {
       }
     } catch (e) {
       console.log('[setSession] - Error: ', e);
+      throw new Error(JSON.stringify(e));
     }
   }
 
