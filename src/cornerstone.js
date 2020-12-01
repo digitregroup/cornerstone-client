@@ -538,10 +538,11 @@ class Cornerstone {
    * @param {string} userName
    * @param {string} firstname
    * @param {string} lastname
+   * @param {string|null} userId
    * @param {object} OU site and BU
    * @returns {Promise<null|*>}
    */
-  async createEmployee({userName, firstname, lastname, ous}) {
+  async createEmployee({userName, firstname, lastname, ous, userId = null}) {
     this.setAuth();
     const path = this.auth.getBaseUrl({corpname: this.corpname}) + config.CORNERSTONE_SERVICE_EMPLOYEE;
     console.log('[createEmployee] - path: ', path);
@@ -557,6 +558,7 @@ class Cornerstone {
         userName:  userName,
         firstname: firstname,
         lastname:  lastname,
+        userId:    userId,
         ous:       ous
       });
       if (userObject.status === 200) {
