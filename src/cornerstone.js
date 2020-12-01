@@ -175,7 +175,7 @@ class Cornerstone {
   async getAllActiveUsers() {
 
     return await this.getReporting({
-      request: "?$filter=user_status_id eq 1&$select=user_id, user_email",
+      request: "?$filter=user_status_id eq 1&$select=user_id, user_email, user_ref",
       url:     config.CORNERSTONE_REPORTING_USER
     });
   }
