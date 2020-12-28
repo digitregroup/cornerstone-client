@@ -2,6 +2,7 @@ const crypto    = require('crypto');
 const axios     = require('axios');
 const fs        = require('fs');
 const dynamoose = require('dynamoose');
+const moment    = require('moment');
 const config    = require('../../config/common')();
 
 /**
@@ -9,21 +10,91 @@ const config    = require('../../config/common')();
  */
 class Auth {
 
-  constructor({apiId, apiSecret, username, alias, corpname, region = null, dynamodbName = null}) {
+  constructor({ apiId, apiSecret, corpname, region = null, dynamodbName = null }) {
     this.apiId        = apiId;
     this.apiSecret    = apiSecret;
-    this.username     = username;
-    this.alias        = alias;
     this.corpname     = corpname;
     this.region       = region;
     this.dynamodbName = dynamodbName;
     this.tokenModel   = null;
+    this.accessToken  = {};
+
+    this.setTokenModel();
   }
 
+  async getAccessToken({ scope }) {
+    if (!scope) return null;
+
+    if (this.accessToken[scope] && moment(this.accessToken[scope].createdAt).add(3600, 'second') > moment()) {
+
+      return this.accessToken[scope];
+    }
+
+    try {
+      const dynamoToken = await this.tokenModel.get({ session: scope }).then((item) => {
+        return item && JSON.parse(item.sessionInfo) || null;
+      });
+      if (dynamoToken && moment(dynamoToken.createdAt).add(3600, 'second') > moment()) {
+        this.accessToken[scope] = dynamoToken;
+
+        return this.accessToken[scope];
+      }
+
+    } catch (error) {
+      throw new Error('Error get token on dynamoDb' + error.message);
+    }
+
+    try {
+      const accessToken = await this.getToken({ scope });
+      const createdAt   = moment().format();
+      await this.saveToken(accessToken, scope, createdAt);
+      this.accessToken[scope] = { accessToken: accessToken, createdAt: createdAt };
+
+      return this.accessToken[scope];
+    } catch (error) {
+      console.log('>>> Error get new token:' + error.message);
+    }
+
+    return null;
+  }
+
+  async saveToken(accessToken, scope, datetime) {
+    const token = new this.tokenModel({
+      session    : scope,
+      sessionInfo: JSON.stringify({ accessToken: accessToken, createdAt: datetime }),
+    });
+    await token.save();
+    console.log('>>> Access token save in dynamoDb');
+  }
+
+  async getToken({ scope }) {
+    try {
+      const response = await axios({
+        method : 'post',
+        url    : `https://${this.corpname}.csod.com/services/api/oauth2/token`,
+        headers: {
+          'Content-Type' : 'application/json',
+          'cache-control': 'no-cache',
+        },
+        data   : {
+          clientId    : this.apiId,
+          clientSecret: this.apiSecret,
+          grantType   : 'client_credentials',
+          scope       : scope,
+        },
+      });
+
+      if (response.status === 200) {
+        return response.data.access_token;
+      }
+
+    } catch (error) {
+      throw new Error('>>> Error get new token');
+    }
+  }
 
   /**
-   * Set dynamoose model if region and dynamodb name are set
-   * @returns {null|*}
+   * Set model
    */
   async setTokenModel() {
     if (this.tokenModel !== null) {
@@ -35,235 +106,15 @@ class Auth {
       return null;
     }
 
-    dynamoose.AWS.config.update({
+    dynamoose.aws.sdk.config.update({
       region: this.region,
     });
 
     this.tokenModel = dynamoose.model(this.dynamodbName, {
-      session:     String,
-      sessionInfo: String
-    });
-
-    return this.tokenModel;
-  }
-
-  /**
-   * Create signature for authentification
-   * @param {string} httpUrl api path like '/services/api/sts/session'
-   * @param {string} dateUTC like '2019-03-11T17:05:00.969'
-   * @returns {string}
-   */
-  getSignature({httpUrl, dateUTC}) {
-    const httpMethod   = 'POST';
-    const apiKeyCsod   = 'x-csod-api-key:' + this.apiId;
-    const dateCsod     = 'x-csod-date:' + dateUTC;
-    const stringToSign = httpMethod + '\n' + apiKeyCsod + '\n' + dateCsod + '\n' + httpUrl;
-    const secretKey    = Buffer.from(this.apiSecret, 'base64');
-    const hmac         = crypto.createHmac('sha512', secretKey);
-    console.log('[getSignature] - signature: ', JSON.stringify(stringToSign));
-
-    return hmac.update(stringToSign).digest('base64');
-  }
-
-  /**
-   * Create signature for request reporting or request REST
-   * @param {string} method http
-   * @param {string} sessionToken
-   * @param {string} sessionSecret
-   * @param {string} httpUrl
-   * @param {string} dateUTC
-   * @returns {string}
-   */
-  getSignatureSession({method, sessionToken, sessionSecret, httpUrl, dateUTC}) {
-    const sessionTokenKey = 'x-csod-session-token:' + sessionToken;
-    const dateCsod        = 'x-csod-date:' + dateUTC;
-    const stringToSign    = method + '\n' + dateCsod + '\n' + sessionTokenKey + '\n' + httpUrl;
-    const secretKey       = Buffer.from(sessionSecret, 'base64');
-    const hmac            = crypto.createHmac('sha512', secretKey);
-    console.log('[getSignatureSession] - signature: ', JSON.stringify(stringToSign));
-
-    return hmac.update(stringToSign).digest('base64');
-  }
-
-  /**
-   * Connection for beginning request
-   * @param baseUrl
-   * @param apiKey
-   * @param dateUTC
-   * @param signature
-   * @returns {Promise<*>}
-   */
-  async setConnection({baseUrl, apiKey, dateUTC, signature}) {
-
-    return await axios.create({
-      baseUrl: baseUrl,
-      timeout: 50000,
-      headers: {
-        'x-csod-api-key':   apiKey,
-        'x-csod-date':      dateUTC,
-        'x-csod-signature': signature
-      }
+      session    : String,
+      sessionInfo: String,
     });
   }
-
-  /**
-   * Create Axios object
-   * @param {string} baseUrl
-   * @param {string} dateUTC
-   * @param {string} token
-   * @param {string} signature
-   * @returns {Promise<*>}
-   */
-  async setConnectionSession({baseUrl, dateUTC, token, signature}) {
-
-    return await axios.create({
-      baseUrl: baseUrl,
-      timeout: 50000,
-      headers: {
-        'x-csod-date':          dateUTC,
-        'x-csod-session-token': token,
-        'x-csod-signature':     signature,
-        'prefer':               "odata.maxpagesize=" + config.MAXPAGESIZE
-      }
-    });
-  }
-
-  /**
-   * Set session authentification from cornerstone
-   * @param {string} dateUTC
-   * @returns {Promise<{alias: *, expiresOn: *, secret: *, status: number | string, token: *}>}
-   */
-  async setSession({dateUTC}) {
-    let sessionFile  = null;
-    const tokenModel = await this.setTokenModel();
-
-    if (!this.tokenModel) {
-      console.log('readFile');
-      sessionFile = await JSON.parse(this.readSession());
-    } else {
-      console.log('readBdd');
-      try {
-        sessionFile = await tokenModel.get({session: 'cornerstone'}).then((item) => {
-          console.log('read dynamodb item:', item);
-          return JSON.parse(item.sessionInfo);
-        }).catch((error) => {
-          console.log('Error readBdd:', error);
-          throw new Error(JSON.stringify(error));
-        });
-
-
-      } catch (error) {
-        console.log('Error read dynamodb:', error);
-        throw new Error(JSON.stringify(error));
-      }
-    }
-
-    console.log('session', sessionFile);
-
-    if (sessionFile) {
-      const dateNow     = new Date();
-      const dateSession = new Date(sessionFile.expiresOn);
-
-      if (dateNow < dateSession) {
-        return sessionFile;
-      }
-    }
-
-    const httpUrl = config.CORNERSTONE_PATH_SESSION;
-
-    const signature = this.getSignature({
-      apiId:     this.apiId,
-      apiSecret: this.apiSecret,
-      httpUrl:   httpUrl,
-      dateUTC:   dateUTC
-    });
-
-    const baseUrl = this.getBaseUrl({corpname: this.corpname});
-
-    const path = `${baseUrl}${httpUrl}?userName=${this.username}&alias=${this.alias + Date.now()}`;
-
-    try {
-      const connection = await this.setConnection({
-        baseUrl:   baseUrl,
-        apiKey:    this.apiId,
-        dateUTC:   dateUTC,
-        signature: signature
-      });
-
-      const response = await connection.post(path);
-
-      if (response.data.status !== 201) {
-        console.log('[setSession] - Error authentification', response.data)
-      } else {
-        console.log('[setSession] - status: ', response.data.status);
-        const session = {
-          status:    response.data.status,
-          token:     response.data.data[0].Token,
-          secret:    response.data.data[0].Secret,
-          alias:     response.data.data[0].Alias,
-          expiresOn: response.data.data[0].ExpiresOn
-        };
-
-        await this.saveSession({sessionInfo: session, tokenModel: this.tokenModel});
-
-        return session;
-      }
-    } catch (e) {
-      console.log('[setSession] - Error: ', e);
-      throw new Error(JSON.stringify(e));
-    }
-  }
-
-  /**
-   * Get base url
-   * @param corpname {string} fice, fice-pilot, fice-stage
-   * @returns {string} url
-   */
-  getBaseUrl({corpname}) {
-    return config.CORNERSTONE_BASE_URL.replace('{corpname}', corpname);
-  }
-
-  async saveSession({sessionInfo, tokenModel}) {
-
-    if (!tokenModel) {
-      if (!fs.existsSync(config.TMP_PATH)) {
-        fs.mkdirSync(config.TMP_PATH);
-      }
-
-      await fs.writeFile(config.TMP_PATH + 'session.json', JSON.stringify(sessionInfo), 'utf8', (e) => {
-        if (e) {
-          console.log('[setSession] - Error save session file', e);
-        } else {
-          console.log('[setSession] - Session saved in tmp file');
-        }
-      });
-    } else {
-      const token = new tokenModel({
-        session:     'cornerstone',
-        sessionInfo: JSON.stringify(sessionInfo)
-      });
-      await token.save();
-      console.log('Session save in dynamoDb');
-    }
-  }
-
-  /**
-   * Read tmp file session authentification
-   * @returns {*}
-   */
-  readSession() {
-    let file;
-
-    if (fs.existsSync(config.TMP_PATH + 'session.json')) {
-      file = fs.readFileSync(config.TMP_PATH + 'session.json', 'utf8');
-      console.log('[readSession] - session tmp file: ', file);
-
-      return file;
-    }
-
-    return null;
-  }
-
 
 }
 
