@@ -11,21 +11,27 @@ The Reporting API is a public facing web service that allows clients programmati
  * [Reporting API Starter Guide_v1.4](documentation/ReportingAPIStarterGuide_v1.4.pdf)
  * [Api documentation](documentation/api_doc.pdf)
 
+###
+There are some use cases in tests repository.
+
+ * tests/reporting-api.test.js
+ * tests/rest-api.test.js
+
+
 ### How to use
 ```
 const params = {
-apiId:     Api Id, can be retrieved within the Manage API tab in Integration Center.
-apiSecret: Api Secret, can be retrieved within the Manage API tab in Integration Center.
-username: A valid username in the portal.
-alias: An arbitrary title for your session.
-corpname: Client assigned hostname for CSOD application
+    apiId:          Api Id, can be retrieved within the Manage API tab in Integration Center.
+    apiSecret:      Api Secret, can be retrieved within the Manage API tab in Integration Center.
+    corpname:       Client assigned hostname for CSOD application
+    region:         Aws-region,
+    dynamodbName:   Aws dynamodb,
 };
 
 const cornerstone = new Cornerstone(params);
 
 const user = await cornerstone.getReportingUserByEmail({email: reporting_user_email});
 
-const keycode = await cornerstone.getReportingKeycodeByUserId({user_id: reporting_user_id});
 ```
 
 ### Queries
