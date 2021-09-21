@@ -41,7 +41,7 @@ class Cornerstone {
         'cache-control': 'no-cache',
         'Accept'       : 'application/json',
         'Content-Type' : 'application/json',
-        'prefer'       : 'odata.maxpagesize=10000',
+        'prefer'       : 'odata.maxpagesize=20000',
       },
     };
   }
